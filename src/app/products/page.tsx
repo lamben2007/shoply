@@ -9,7 +9,7 @@ export default async function ProductsPage() {
 
 
 
-    console.log("DB_URL", process.env.DATABASE_URL);
+    // console.log("DB_URL", process.env.DATABASE_URL);
 
 
 
