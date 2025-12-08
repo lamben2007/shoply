@@ -7,6 +7,12 @@ import ProductCardClient from './ProductCardClient';
 
 export default async function ProductsPage() {
 
+
+
+    console.log("DB_URL", process.env.DATABASE_URL);
+
+
+
     // Récupérer les produits hors du JSX
     const products = await prisma.product.findMany({
         orderBy: { createdAt: 'desc' },
