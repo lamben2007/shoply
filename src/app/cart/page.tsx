@@ -1,10 +1,12 @@
 'use client';
 
-import { useCartStore } from '@/store/cartStore';
+import { useCartStore } from '@/store/useCartStore';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export default function CartPage() {
+
+    //
     const { items, removeItem, updateQuantity, total, clearCart } = useCartStore();
 
     if (items.length === 0) {

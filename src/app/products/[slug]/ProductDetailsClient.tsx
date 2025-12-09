@@ -1,23 +1,18 @@
 'use client';
 
 import Image from 'next/image';
-import { useCartStore } from '@/store/cartStore';
+import { useCartStore } from '@/store/useCartStore';
+import { Product } from '@/types/product';
 
-type Product = {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    price: number;
-    image_url: string;
-    stock: number;
-};
+
 
 type Props = {
     product: Product;
 };
 
 export default function ProductDetailsClient({ product }: Props) {
+
+    //
     const addItem = useCartStore((state) => state.addItem);
 
     const handleAddToCart = () => {
@@ -26,7 +21,7 @@ export default function ProductDetailsClient({ product }: Props) {
             name: product.name,
             slug: product.slug,
             price: product.price,
-            imageUrl: product.image_url,
+            imageUrl: product.imageUrl,
             quantity: 1,
         });
     };
@@ -36,7 +31,7 @@ export default function ProductDetailsClient({ product }: Props) {
             <div className="flex flex-col md:flex-row gap-8">
                 <div className="relative w-full md:w-1/2 h-80 md:h-[400px]">
                     <Image
-                        src={product.image_url}
+                        src={product.imageUrl}
                         alt={product.name}
                         fill
                         className="object-cover rounded-lg"

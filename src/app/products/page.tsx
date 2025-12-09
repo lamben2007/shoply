@@ -1,28 +1,21 @@
-// app/products/page.tsx
-export const dynamic = "force-dynamic";
+"use client";
 
-import prisma from '@/lib/prisma'
-import ProductCardClient from './ProductCardClient';
+import { useEffect } from "react";
+import { useProductStore } from "@/store/useProductStore";
+import ProductCardClient from "./ProductCardClient";
 
+export default function ProductsPage() {
 
-export default async function ProductsPage() {
+    //
+    const { products, fetchProducts, loading, error } = useProductStore();
 
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
 
-
-    // console.log("DB_URL", process.env.DATABASE_URL);
-
-
-
-    // Récupérer les produits hors du JSX
-    const products = await prisma.product.findMany({
-        orderBy: { createdAt: 'desc' },
-    });
-
-
-    // Si aucun produit
-    if (!products || products.length === 0) {
-        return <p className="text-red-500">Aucun produit trouvé</p>;
-    }
+    if (loading) return <p>Chargement...</p>;
+    if (error) return <p className="text-red-500">{error}</p>;
+    if (!products.length) return <p>Aucun produit trouvé</p>;
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-10">

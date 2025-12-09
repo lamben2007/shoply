@@ -1,43 +1,50 @@
-import { supabase } from '@/lib/supabaseClient';
-// import Image from 'next/image';
-import { notFound } from 'next/navigation';
-// import { useCartStore } from '@/store/cartStore';
-import ProductDetailsClient from './ProductDetailsClient';
+"use client";
 
-type Params = Promise<{ slug: string }>
+import { useEffect, useState } from "react";
+import { useProductStore } from "@/store/useProductStore";
+import ProductDetailsClient from "./ProductDetailsClient";
+import { useParams } from "next/navigation";
+import { Product } from "@/types/product"
 
+export default function ProductPage() {
+    const { slug } = useParams<{ slug: string }>();
+    const { products } = useProductStore();
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
+    useEffect(() => {
+        // Vérifier si le produit est déjà dans le store
+        const existing = products.find((p) => p.slug === slug);
+        if (existing) {
+            setProduct(existing);
+            setLoading(false);
+            return;
+        }
 
-type Product = {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    price: number;
-    image_url: string;
-    stock: number;
-};
+        // Sinon fetch via API
+        const fetchProduct = async () => {
+            setLoading(true);
+            try {
+                const res = await fetch(`/api/products/${slug}`);
+                if (!res.ok) throw new Error("Produit introuvable");
+                const data: { product: Product } = await res.json();
+                setProduct(data.product);
 
+            } catch (err: unknown) {
+                const message = err instanceof Error ? err.message : "Erreur inconnue";
+                setError(message);
+                
+            } finally {
+                setLoading(false);
+            }
+        };
 
+        fetchProduct();
+    }, [slug, products]);
 
-export default async function Page(props: {
-    params: Params
-}) {
-    const params = await props.params
-    const slug = params.slug
+    if (loading) return <p>Chargement...</p>;
+    if (error || !product) return <p className="text-red-500">{error ?? "Produit introuvable"}</p>;
 
-
-    // Récupérer le produit par slug
-    const { data, error } = await supabase
-        .from('products')
-        .select('*')          
-        .eq('slug', slug)
-        .limit(1)
-        .single<Product>();  
-
-    if (error || !data) {
-        return notFound();
-    }
-
-     return <ProductDetailsClient product={data} />;
+    return <ProductDetailsClient product={product} />;
 }

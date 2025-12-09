@@ -2,23 +2,16 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCartStore } from '@/store/cartStore';
-
-type Product = {
-    id: string;
-    name: string;
-    slug: string;
-    description: string | null;
-    price: number;
-    imageUrl: string;
-    stock: number;
-};
+import { useCartStore } from '@/store/useCartStore';
+import { Product } from '@/types/product'
 
 type Props = {
     product: Product;
 };
 
 export default function ProductCardClient({ product }: Props) {
+
+    //
     const addItem = useCartStore((state) => state.addItem);
 
     const handleAddToCart = () => {
