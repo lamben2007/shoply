@@ -1,6 +1,6 @@
 {
   "name": "shoply",
-  "version": "Version du 09/12/2025",
+  "version": "Version du 10/12/2025",
   "private": true,
   "scripts": {
     "dev": "next dev",
