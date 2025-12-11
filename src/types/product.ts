@@ -5,6 +5,7 @@ export type Product = {
     description?: string;
     price: number;
     imageUrl: string;
+    imagePreview: string;
     stock: number;
     createdAt: string; // ISO date venant de l’API
 };

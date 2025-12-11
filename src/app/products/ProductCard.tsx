@@ -4,12 +4,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCartStore } from '@/store/useCartStore';
 import { Product } from '@/types/product'
+import { toast } from 'sonner';
 
 type Props = {
     product: Product;
 };
 
-export default function ProductCardClient({ product }: Props) {
+export default function ProductCard({ product }: Props) {
 
     //
     const addItem = useCartStore((state) => state.addItem);
@@ -23,20 +24,22 @@ export default function ProductCardClient({ product }: Props) {
             imageUrl: product.imageUrl,
             quantity: 1,
         });
+        toast.success('Produit ajouté au panier !');
     };
 
     return (
         <div className="border rounded-lg p-4 shadow-sm hover:shadow-lg transition-shadow duration-200">
             <div className="relative w-full h-64 mb-4">
                 <Image
-                    src={product.imageUrl}
+                    src={product.imagePreview}
                     alt={product.name}
-                    fill
-                    className="object-cover rounded"
-                    unoptimized
+                    width={400}
+                    height={400}
+                    className="rounded-lg object-cover"
                 />
             </div>
             <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
+            <p>{product.id}</p>
             <p className="text-gray-700 mb-2">{product.description}</p>
             <p className="text-lg font-bold mb-4">{product.price.toFixed(2)} €</p>
             <div className="flex justify-between items-center">

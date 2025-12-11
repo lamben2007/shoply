@@ -3,14 +3,16 @@
 import Image from 'next/image';
 import { useCartStore } from '@/store/useCartStore';
 import { Product } from '@/types/product';
+import { toast } from 'sonner';
 
 
-
+//
 type Props = {
     product: Product;
 };
 
-export default function ProductDetailsClient({ product }: Props) {
+//
+export default function ProductDetails({ product }: Props) {
 
     //
     const addItem = useCartStore((state) => state.addItem);
@@ -24,7 +26,8 @@ export default function ProductDetailsClient({ product }: Props) {
             imageUrl: product.imageUrl,
             quantity: 1,
         });
-    };
+        toast.success('Produit ajouté au panier !');
+    }
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-10">
@@ -33,9 +36,9 @@ export default function ProductDetailsClient({ product }: Props) {
                     <Image
                         src={product.imageUrl}
                         alt={product.name}
-                        fill
-                        className="object-cover rounded-lg"
-                        unoptimized
+                        width={1200}
+                        height={800}
+                        className="rounded-xl object-cover"
                     />
                 </div>
 

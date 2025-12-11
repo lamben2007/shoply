@@ -17,7 +17,13 @@ export async function GET(request: Request, segmentData: { params: Params }) {
             return NextResponse.json({ error: "Produit introuvable" }, { status: 404 });
         }
 
-        return NextResponse.json({ product });
+        return NextResponse.json({ 
+
+            ...product,
+            price: parseFloat(product.price as unknown as string),
+         });
+
+
     } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Erreur inconnue";
         return NextResponse.json({ error: message }, { status: 500 });

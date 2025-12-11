@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useProductStore } from "@/store/useProductStore";
-import ProductDetailsClient from "./ProductDetailsClient";
+import ProductDetails from "./ProductDetails";
 import { useParams } from "next/navigation";
 import { Product } from "@/types/product"
 
@@ -46,5 +46,5 @@ export default function ProductPage() {
     if (loading) return <p>Chargement...</p>;
     if (error || !product) return <p className="text-red-500">{error ?? "Produit introuvable"}</p>;
 
-    return <ProductDetailsClient product={product} />;
+    return <ProductDetails product={product} />;
 }

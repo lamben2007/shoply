@@ -3,6 +3,7 @@
 import { useCartStore } from '@/store/useCartStore';
 import Image from 'next/image';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function CartPage() {
 
@@ -41,7 +42,10 @@ export default function CartPage() {
                             />
                         </div>
                         <button
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => {
+                                removeItem(item.id)
+                                toast.success('Produit supprimé au panier !');
+                            }}
                             className="text-red-600 hover:underline"
                         >
                             Supprimer
@@ -53,7 +57,21 @@ export default function CartPage() {
             <div className="mt-8 text-right">
                 <p className="text-xl font-bold mb-4">Total : {total().toFixed(2)} €</p>
                 <button
-                    onClick={clearCart}
+                    onClick={() => {
+                        toast.warning(
+                            "Voulez-vous vraiment vider le panier ?",
+                            {
+                                duration: 10000, // 10 secondes
+                                action: {
+                                    label: "Confirmer",
+                                    onClick: () => {
+                                        clearCart();
+                                        toast.success("Panier vidé !");
+                                    },
+                                }
+                            }
+                        );
+                    }}
                     className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700"
                 >
                     Vider le panier

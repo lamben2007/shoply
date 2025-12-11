@@ -24,3 +24,28 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Dégradé personnalisé pour Sonner */
+.sonner-gradient {
+  background: linear-gradient(90deg, #2563eb, #60a5fa) !important;
+  color: #fff !important;
+  font-weight: bold !important;
+}
+
+[data-sonner-toast][data-type="success"] {
+  background: linear-gradient(90deg, #16a34a, #4ade80) !important; /* vert foncé → vert clair */
+  color: white !important;
+  font-weight: bold !important;
+}
+
+[data-sonner-toast][data-type="error"] {
+  background: linear-gradient(90deg, #dc2626, #f87171) !important;
+  color: white !important;
+}
+
+[data-sonner-toast][data-type="warning"] {
+  background: linear-gradient(90deg, #d97706, #f59e42) !important;
+  color: white !important;
+}
+
+
