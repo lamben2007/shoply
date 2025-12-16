@@ -15,8 +15,6 @@ export default function ProductsPage() {
         fetchProducts();
     }, [fetchProducts]);
 
-    console.log("products:", products)
-
 
     //
     return (

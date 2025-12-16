@@ -8,6 +8,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import CartIcon from './CartIcon';
+import AuthStatus from './AuthStatus';
+import packageJson from '../../package.json';
+
 
 export default function Header() {
     // Récupère le chemin d'URL courant pour détecter la page active
@@ -46,20 +50,36 @@ export default function Header() {
 
     return (
         // Header fixé en haut : fond blanc, ombre légère, pleine largeur
-        <header className="px-6 py-4 border-b bg-white shadow-sm fixed top-0 inset-x-0 z-50">
-            {/* Menu horizontal centré avec espace entre chaque onglet */}
-            <nav className="flex gap-6 max-w-6xl mx-auto items-center">
-                {links.map(link => (
-                    // NavLink avec style dynamique selon la page courante
-                    <Link
-                        key={link.href}
-                        href={link.href}
-                        className={getLinkClassName(link.href)}
-                    >
-                        {link.label}
-                    </Link>
-                ))}
-            </nav>
+        <header className="px-6 py-4 border-b bg-white shadow-sm fixed top-0 inset-x-0 z-50 flex justify-between items-center gap-1.5 ">
+
+            <div className="flex items-center gap-6">
+
+                <div className='flex flex-col'>
+                    <div className='text-6xl'>SHOPLY</div>
+                    <div className='text-xs'>{packageJson.version}</div>
+                </div>
+
+                <nav className="flex gap-6 max-w-6xl">
+                    {links.map(link => (
+                        // NavLink avec style dynamique selon la page courante
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className={getLinkClassName(link.href)}
+                        >
+                            {link.label}
+                        </Link>
+                    ))}
+                </nav>
+
+            </div>
+
+            <div className="flex items-center gap-6">
+                <AuthStatus />
+
+                <CartIcon />
+            </div>
+
         </header>
     );
 }

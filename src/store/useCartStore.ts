@@ -13,6 +13,7 @@ export type CartItem = {
 type CartState = {
     items: CartItem[];
     addItem: (item: CartItem) => void;
+    getItemById: (id: string) => CartItem | undefined;
     removeItem: (id: string) => void;
     updateQuantity: (id: string, quantity: number) => void;
     clearCart: () => void;
@@ -24,6 +25,10 @@ export const useCartStore = create<CartState>()(
 
         (set, get) => ({
             items: [],
+
+            getItemById: (id) => {
+                return get().items.find((item) => item.id === id);
+            },
 
             addItem: (item) => {
                 const existing = get().items.find((i) => i.id === item.id);

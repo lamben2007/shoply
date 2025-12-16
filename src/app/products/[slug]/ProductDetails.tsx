@@ -1,9 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { useCartStore } from '@/store/useCartStore';
 import { Product } from '@/types/product';
-import { toast } from 'sonner';
+import CartAction from '@/components/CartAction';
+import { useProductCartActions } from '@/hooks/useProductCartActions';
 
 
 //
@@ -15,20 +15,14 @@ type Props = {
 export default function ProductDetails({ product }: Props) {
 
     //
-    const addItem = useCartStore((state) => state.addItem);
+    const {
+        cartItem,
+        handleAddToCart,
+        handleRemoveToCart,
+        handleChangeQuantity
+    } = useProductCartActions(product);
 
-    const handleAddToCart = () => {
-        addItem({
-            id: product.id,
-            name: product.name,
-            slug: product.slug,
-            price: product.price,
-            imageUrl: product.imageUrl,
-            quantity: 1,
-        });
-        toast.success('Produit ajouté au panier !');
-    }
-
+    //
     return (
         <div className="max-w-4xl mx-auto px-4 py-10">
             <div className="flex flex-col md:flex-row gap-8">
@@ -52,15 +46,7 @@ export default function ProductDetails({ product }: Props) {
                             {product.stock > 0 ? product.stock : 'Rupture'}
                         </span>
                     </p>
-
-                    <button
-                        onClick={handleAddToCart}
-                        className={`px-6 py-3 rounded-lg text-white font-semibold ${product.stock > 0 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
-                            } transition-colors`}
-                        disabled={product.stock === 0}
-                    >
-                        Ajouter au panier
-                    </button>
+                    <CartAction quantity={cartItem?.quantity} onAdd={handleAddToCart} onRemove={handleRemoveToCart} onChangeQuantity={handleChangeQuantity} />
                 </div>
             </div>
         </div>

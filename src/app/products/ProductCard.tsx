@@ -2,33 +2,29 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCartStore } from '@/store/useCartStore';
-import { Product } from '@/types/product'
-import { toast } from 'sonner';
+import { Product } from '@/types/product';
+import CartAction from '@/components/CartAction';
+import { useProductCartActions } from '@/hooks/useProductCartActions';
 
+// Déclaration des props attendues par ProductCard
 type Props = {
     product: Product;
 };
 
 export default function ProductCard({ product }: Props) {
+    // Custom hook factorisé qui centralise toute la logique panier
+    // Fournit l'item du panier lié au produit, et les handlers pour les actions
+    const {
+        cartItem,
+        handleAddToCart,
+        handleRemoveToCart,
+        handleChangeQuantity
+    } = useProductCartActions(product);
 
-    //
-    const addItem = useCartStore((state) => state.addItem);
-
-    const handleAddToCart = () => {
-        addItem({
-            id: product.id,
-            name: product.name,
-            slug: product.slug,
-            price: product.price,
-            imageUrl: product.imageUrl,
-            quantity: 1,
-        });
-        toast.success('Produit ajouté au panier !');
-    };
-
+    // Rendu principal du composant
     return (
         <div className="border rounded-lg p-4 shadow-sm hover:shadow-lg transition-shadow duration-200">
+            {/* Affichage de l’image produit via next/image */}
             <div className="relative w-full h-64 mb-4">
                 <Image
                     src={product.imagePreview}
@@ -38,25 +34,30 @@ export default function ProductCard({ product }: Props) {
                     className="rounded-lg object-cover"
                 />
             </div>
+
+            {/* Informations sur le produit */}
             <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
             <p>{product.id}</p>
             <p className="text-gray-700 mb-2">{product.description}</p>
             <p className="text-lg font-bold mb-4">{product.price.toFixed(2)} €</p>
+
+            {/* Action row : Lien vers la fiche + gestion du panier */}
             <div className="flex justify-between items-center">
+                {/* Lien vers la page de détails produit */}
                 <Link
                     href={`/products/${product.slug}`}
                     className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
                 >
                     Voir
                 </Link>
-                <button
-                    onClick={handleAddToCart}
-                    className={`px-4 py-2 rounded text-white font-semibold ${product.stock > 0 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
-                        } transition-colors`}
-                    disabled={product.stock === 0}
-                >
-                    Ajouter
-                </button>
+
+                {/* Composant d'action panier, entièrement contrôlé par logique du hook */}
+                <CartAction
+                    quantity={cartItem?.quantity}          // Quantité dans le panier (undefined si non ajouté)
+                    onAdd={handleAddToCart}                // Handler pour ajouter le produit
+                    onRemove={handleRemoveToCart}          // Handler pour retirer le produit
+                    onChangeQuantity={handleChangeQuantity} // Handler pour modifier la quantité
+                />
             </div>
         </div>
     );
