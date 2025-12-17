@@ -15,35 +15,38 @@ export default function ProfilePage() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const [userId, setUserId] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {
         const fetchProfile = async () => {
             const supabase = createClient();
-            // Check session/user
+            // Vérifie l'authentification côté client
             const { data: userData } = await supabase.auth.getUser();
             if (!userData.user) {
                 router.push("/login");
                 return;
             }
-            setUserId(userData.user.id);
 
-            // Get profile
-            const { data, error } = await supabase
-                .from("profiles")
-                .select("nom, prenom, adresse")
-                .eq("id", userData.user.id)
-                .single();
+            try {
+                const res = await fetch("/api/profile");
+                if (!res.ok) {
+                    setError("Impossible de charger le profil.");
+                    setLoading(false);
+                    return;
+                }
+                const data = await res.json() as Profile;
 
-            if (error && error.code !== 'PGRST116') {
-                setError("Impossible de charger le profil." + error.message);
-            } else {
+
+                console.log("data profile:", data.adresse)
+
+
                 setProfile({
-                    nom: data?.nom || "",
-                    prenom: data?.prenom || "",
-                    adresse: data?.adresse || "",
+                    nom: data.nom || "",
+                    prenom: data.prenom || "",
+                    adresse: data.adresse || "",
                 });
+            } catch {
+                setError("Erreur réseau lors du chargement.");
             }
             setLoading(false);
         };
@@ -60,18 +63,19 @@ export default function ProfilePage() {
         setSuccess("");
         setSaving(true);
 
-        const supabase = createClient();
-        const { error } = await supabase
-            .from("profiles")
-            .upsert({
-                id: userId,
-                ...profile,
+        try {
+            const res = await fetch("/api/profile", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(profile),
             });
-
-        if (error) {
-            setError("Erreur lors de l’enregistrement.");
-        } else {
-            setSuccess("Profil enregistré !");
+            if (!res.ok) {
+                setError("Erreur lors de l’enregistrement.");
+            } else {
+                setSuccess("Profil enregistré !");
+            }
+        } catch {
+            setError("Erreur réseau lors de l’enregistrement.");
         }
         setSaving(false);
     };
@@ -80,7 +84,6 @@ export default function ProfilePage() {
 
     return (
         <div className="max-w-md mx-auto py-8">
-            <pre>{userId}</pre>
             <h1 className="text-2xl font-bold mb-4">Mon profil</h1>
             <form className="space-y-4" onSubmit={handleSubmit}>
                 <input
@@ -104,7 +107,11 @@ export default function ProfilePage() {
                     className="input input-bordered w-full"
                     placeholder="Adresse"
                 />
-                <button type="submit" disabled={saving} className="btn btn-primary w-full">
+                <button
+                    type="submit"
+                    disabled={saving}
+                    className="btn btn-primary w-full"
+                >
                     {saving ? "Enregistrement..." : "Enregistrer"}
                 </button>
                 {error && <p className="text-red-500">{error}</p>}

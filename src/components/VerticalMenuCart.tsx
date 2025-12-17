@@ -12,7 +12,7 @@ const menuItems: MenuItem[] = [
   { href: '/favoris', label: 'Favoris', icon: <Heart className="w-5 h-5 mr-3" /> },
   { href: '/cart', label: 'Chariot', icon: <ShoppingCart className="w-5 h-5 mr-3" /> },
   { href: '/paiement', label: 'Paiement', icon: <CreditCard className="w-5 h-5 mr-3" /> },
-  { href: '/commandes', label: 'Mes commandes', icon: <Package className="w-5 h-5 mr-3" /> },
+  { href: '/orders', label: 'Mes commandes', icon: <Package className="w-5 h-5 mr-3" /> },
 ];
 
 const VerticalMenuCart = () => (

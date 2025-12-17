@@ -5,6 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  schemas  = ["public", "auth"]
 }
 
 model Product {
@@ -20,6 +21,7 @@ model Product {
   orderItems   OrderItem[]
 
   @@map("products")
+  @@schema("public")
 }
 
 model Order {
@@ -32,6 +34,7 @@ model Order {
   items      OrderItem[]
 
   @@map("orders")
+  @@schema("public")
 }
 
 model OrderItem {
@@ -44,4 +47,25 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("order_items")
+  @@schema("public")
+}
+
+
+model profiles {
+  id      String   @id @db.Uuid
+  nom     String?
+  prenom  String?
+  adresse String?
+
+  user    users    @relation(fields: [id], references: [id])
+
+  @@schema("public")
+}
+
+model users {
+  id       String      @id @db.Uuid
+  profiles profiles?
+
+  @@map("users")
+  @@schema("auth")
 }
