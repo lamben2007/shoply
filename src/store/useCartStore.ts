@@ -1,14 +1,6 @@
+import { CartItem } from '@/types/cart';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware'
-
-export type CartItem = {
-    id: string;
-    name: string;
-    slug: string;
-    price: number;
-    imageUrl: string;
-    quantity: number;
-};
 
 type CartState = {
     items: CartItem[];
@@ -27,15 +19,15 @@ export const useCartStore = create<CartState>()(
             items: [],
 
             getItemById: (id) => {
-                return get().items.find((item) => item.id === id);
+                return get().items.find((item) => item.productId === id);
             },
 
             addItem: (item) => {
-                const existing = get().items.find((i) => i.id === item.id);
+                const existing = get().items.find((i) => i.productId === item.productId);
                 if (existing) {
                     set({
                         items: get().items.map((i) =>
-                            i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
+                            i.productId === item.productId ? { ...i, quantity: i.quantity + item.quantity } : i
                         ),
                     });
                 } else {
@@ -44,13 +36,13 @@ export const useCartStore = create<CartState>()(
             },
 
             removeItem: (id) => {
-                set({ items: get().items.filter((i) => i.id !== id) });
+                set({ items: get().items.filter((i) => i.productId !== id) });
             },
 
             updateQuantity: (id, quantity) => {
                 set({
                     items: get().items.map((i) =>
-                        i.id === id ? { ...i, quantity: quantity } : i
+                        i.productId === id ? { ...i, quantity: quantity } : i
                     ),
                 });
             },

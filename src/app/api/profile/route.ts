@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from '@/lib/supabase/server';
+import { Profile } from "@/types/profile";
 
 
 export async function GET() {
@@ -16,7 +17,7 @@ export async function GET() {
     }
 
     // 3. Récupère les commandes avec le filtre id
-    const profile = await prisma.profiles.findUnique({
+    const profile = await prisma.profile.findUnique({
         where: { id: user.id },
     });
 
@@ -36,15 +37,14 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     }
 
-    const data = await req.json();
+    const data = await req.json() as Profile;
 
     try {
-        const profile = await prisma.profiles.update({
+        const profile = await prisma.profile.update({
             where: { id: user.id },
             data: {
-                nom: data.nom ?? "",
-                prenom: data.prenom ?? "",
-                adresse: data.adresse ?? "",
+                lastName: data.lastName ?? "",
+                firstName: data.firstName ?? "",
             },
         });
         return NextResponse.json(profile);

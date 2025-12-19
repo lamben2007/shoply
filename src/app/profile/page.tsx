@@ -2,15 +2,12 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { Profile } from "@/types/profile";
 
-type Profile = {
-    nom: string;
-    prenom: string;
-    adresse: string;
-};
 
 export default function ProfilePage() {
-    const [profile, setProfile] = useState<Profile>({ nom: "", prenom: "", adresse: "" });
+
+    const [profile, setProfile] = useState<Profile>({ id: "", lastName: "", firstName: "" });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
@@ -36,15 +33,12 @@ export default function ProfilePage() {
                 }
                 const data = await res.json() as Profile;
 
-
-                console.log("data profile:", data.adresse)
-
-
                 setProfile({
-                    nom: data.nom || "",
-                    prenom: data.prenom || "",
-                    adresse: data.adresse || "",
+                    id: data.id,
+                    lastName: data.lastName || "",
+                    firstName: data.firstName || "",
                 });
+
             } catch {
                 setError("Erreur réseau lors du chargement.");
             }
@@ -58,6 +52,7 @@ export default function ProfilePage() {
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
+
         e.preventDefault();
         setError("");
         setSuccess("");
@@ -87,26 +82,20 @@ export default function ProfilePage() {
             <h1 className="text-2xl font-bold mb-4">Mon profil</h1>
             <form className="space-y-4" onSubmit={handleSubmit}>
                 <input
-                    name="prenom"
-                    value={profile.prenom}
+                    name="firstName"
+                    value={profile.firstName}
                     onChange={handleChange}
                     className="input input-bordered w-full"
                     placeholder="Prénom"
                 />
                 <input
-                    name="nom"
-                    value={profile.nom}
+                    name="lastName"
+                    value={profile.lastName}
                     onChange={handleChange}
                     className="input input-bordered w-full"
                     placeholder="Nom"
                 />
-                <input
-                    name="adresse"
-                    value={profile.adresse}
-                    onChange={handleChange}
-                    className="input input-bordered w-full"
-                    placeholder="Adresse"
-                />
+
                 <button
                     type="submit"
                     disabled={saving}

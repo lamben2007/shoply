@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { User as UserIcon } from "lucide-react";
 
 export default function AuthStatus() {
+
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
@@ -51,6 +52,13 @@ export default function AuthStatus() {
         router.push("/profile");
     };
 
+    const handleAddresses = () => {
+        setOpen(false);
+        router.push("/addresses");
+    };
+
+
+
     if (loading) return null;
 
     return (
@@ -73,12 +81,9 @@ export default function AuthStatus() {
                 <ul className="menu dropdown-content absolute right-0 mt-2 z-20 p-2 shadow bg-base-100 rounded-box w-52">
                     {user ? (
                         <>
-                            <li>
-                                <button onClick={handleProfile}>Voir profil</button>
-                            </li>
-                            <li>
-                                <button onClick={handleLogout} className="text-red-600">Déconnexion</button>
-                            </li>
+                            <li><button onClick={handleProfile}>Voir profil</button></li>
+                            <li><button onClick={handleAddresses}>Adresses</button></li>
+                            <li><button onClick={handleLogout} className="text-red-600">Déconnexion</button></li>
                         </>
                     ) : (
                         <>

@@ -36,7 +36,7 @@ export default function CartPage() {
                 <h1 className="text-3xl font-bold mb-8">Panier</h1>
                 <div className="space-y-6">
                     {items.map((item) => (
-                        <div key={item.id} className="flex items-center gap-4 border-b pb-4">
+                        <div key={item.productId} className="flex items-center gap-4 border-b pb-4">
                             <div className="w-24 h-24 relative">
                                 <Link href={`/products/${item.slug}`}>
                                     <Image src={item.imageUrl} alt={item.name} fill className="object-cover rounded" unoptimized />
@@ -50,14 +50,14 @@ export default function CartPage() {
                                     type="number"
                                     min={1}
                                     value={item.quantity}
-                                    onChange={(e) => updateQuantity(item.id, Number(e.target.value))}
+                                    onChange={(e) => updateQuantity(item.productId, Number(e.target.value))}
                                     className="border rounded px-2 py-1 w-20 mt-1"
                                 />
                             </div>
 
                             <button
                                 onClick={() => {
-                                    removeItem(item.id)
+                                    removeItem(item.productId)
                                     toast.success('Produit supprimé au panier !');
                                 }}
                                 className="text-red-600 hover:underline"

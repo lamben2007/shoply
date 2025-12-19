@@ -33,12 +33,12 @@ export type Order = Prisma.OrderModel
  */
 export type OrderItem = Prisma.OrderItemModel
 /**
- * Model profiles
+ * Model Address
  * 
  */
-export type profiles = Prisma.profilesModel
+export type Address = Prisma.AddressModel
 /**
- * Model users
+ * Model Profile
  * 
  */
-export type users = Prisma.usersModel
+export type Profile = Prisma.ProfileModel

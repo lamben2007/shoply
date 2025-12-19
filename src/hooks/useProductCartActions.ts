@@ -8,11 +8,11 @@ export function useProductCartActions(product: Product) {
     const addItem = useCartStore(state => state.addItem);
     const removeItem = useCartStore(state => state.removeItem);
     const updateQuantity = useCartStore(state => state.updateQuantity);
-    const cartItem = useCartStore(state => state.items.find(item => item.id === product.id));
+    const cartItem = useCartStore(state => state.items.find(item => item.productId === product.id));
 
     const handleAddToCart = () => {
         addItem({
-            id: product.id,
+            productId: product.id,
             name: product.name,
             slug: product.slug,
             price: product.price,
