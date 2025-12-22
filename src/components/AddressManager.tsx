@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import { Address } from '@/types/address';
 import AddressForm from '@/components/AddressForm';
 
-
+/**
+ * Gestionnaire d'adresses utilisateur : permet d'afficher, créer, modifier, supprimer et définir l'adresse de livraison par défaut.
+ *
+ * @param onAddressesChanged Callback appelé après modification de la liste d'adresses (création/suppression/mise à jour). Optionnel.
+ * @returns Le composant principal de gestion des adresses.
+ */
 function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => void }) {
 
     const [addresses, setAddresses] = useState<Address[]>([]);
@@ -10,6 +15,10 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
     const [editAddress, setEditAddress] = useState<Address | null>(null);
 
     useEffect(() => {
+        /**
+         * Récupère les adresses à l'initialisation du composant.
+         * @returns {Promise<void>}
+         */
         const fetchAddresses = async () => {
             try {
                 const res = await fetch('/api/address');
@@ -22,11 +31,19 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
         fetchAddresses();
     }, []);
 
+    /**
+     * Ouvre le formulaire en mode édition, avec une adresse à éditer.
+     * @param address Adresse à éditer.
+     */
     const handleEdit = (address: Address) => {
         setEditAddress(address);
         setShowForm(true);
     };
 
+    /**
+     * Supprime une adresse (après confirmation utilisateur).
+     * @param id Identifiant de l'adresse à supprimer.
+     */
     const handleDelete = async (id: string) => {
         if (!confirm('Supprimer cette adresse ?')) return;
         await fetch(`/api/address/${id}`, { method: 'DELETE' });
@@ -34,8 +51,11 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
         if (onAddressesChanged) onAddressesChanged();
     };
 
+    /**
+     * Définit une adresse comme adresse de livraison par défaut.
+     * @param id Identifiant de l'adresse à définir par défaut.
+     */
     const handleDefaultShipping = async (id: string) => {
-        //
         await fetch(`/api/address/default-shipping/${id}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
@@ -44,6 +64,9 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
         if (onAddressesChanged) onAddressesChanged();
     };
 
+    /**
+     * Récupère la liste des adresses utilisateur depuis l'API.
+     */
     const fetchAddresses = async () => {
         try {
             const res = await fetch('/api/address');
@@ -54,6 +77,10 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
         }
     };
 
+    /**
+     * Valide le formulaire d'édition/création d'adresse (création ou mise à jour).
+     * @param form Données du formulaire à enregistrer.
+     */
     const handleFormValidate = async (form: Partial<Address>) => {
         if (editAddress) {
             await fetch(`/api/address/${editAddress.id}`, {
@@ -73,6 +100,7 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
         await fetchAddresses();
         if (onAddressesChanged) onAddressesChanged();
     };
+
 
     //
     return (
@@ -102,9 +130,6 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
                             {!addr.isDefaultShipping && (
                                 <button onClick={() => handleDefaultShipping(addr.id)}>Mettre par défaut (livraison)</button>
                             )}
-                            {/* {!addr.isDefaultBilling && (
-                <button onClick={() => handleDefault(addr.id, 'billing')}>Mettre par défaut (facturation)</button>
-              )} */}
                         </div>
                         <div>
                             {addr.isDefaultShipping && (

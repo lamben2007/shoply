@@ -44,7 +44,7 @@ export async function GET() {
 
 
 
-export async function POST(request: Request) {
+export async function POST() {
 //     try {
 //         const data = await request.json();
 //         const parsed = OrderSchema.parse(data);

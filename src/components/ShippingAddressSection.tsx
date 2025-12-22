@@ -2,7 +2,13 @@ import { Address } from '@/types/address';
 import { useEffect, useState } from 'react';
 import AddressManager from './AddressManager';
 
-// Sous-composant : card affichée pour l'adresse sélectionnée
+/**
+ * Card affichant l'adresse sélectionnée.
+ *
+ * @param address - Adresse à afficher.
+ * @param onSelect - Callback appelé lors de la sélection.
+ * @returns Le composant de carte de l'adresse sélectionnée.
+ */
 function SelectedAddressCard({ address, onSelect }: {
     address: Address | undefined,
     onSelect: () => void,
@@ -30,7 +36,16 @@ function SelectedAddressCard({ address, onSelect }: {
     );
 }
 
-// Sous-composant : modale de sélection d'adresse (DaisyUI)
+/**
+ * Modale pour sélectionner une adresse dans la liste.
+ *
+ * @param addresses - Tableau des adresses à afficher.
+ * @param selectedAddressId - Identifiant de l'adresse sélectionnée.
+ * @param onSelectAddress - Fonction appelée lors de la sélection d'une adresse.
+ * @param show - Indique si la modale est affichée.
+ * @param onClose - Fonction appelée pour fermer la modale.
+ * @returns Le composant modal de sélection d'adresse.
+ */
 function AddressSelectModal({
     addresses,
     selectedAddressId,
@@ -83,6 +98,12 @@ function AddressSelectModal({
     );
 }
 
+/**
+ * Section principale de gestion et sélection de l'adresse de livraison.
+ *
+ * @param onSelect - Callback lors de la sélection d'une adresse.
+ * @returns Le composant section d'adresse de livraison.
+ */
 export default function ShippingAddressSection({ onSelect }: { onSelect: (addr: Address) => void }) {
 
     const [addresses, setAddresses] = useState<Address[]>([]);
@@ -92,8 +113,12 @@ export default function ShippingAddressSection({ onSelect }: { onSelect: (addr: 
     const [showModal, setShowModal] = useState(false);
     const [showManageModal, setShowManageModal] = useState(false);
 
-
-    async function fetchAddresses(currentSelectedId?: string) {
+    /**
+     * Récupère la liste des adresses et met à jour la sélection.
+     * @param {string} [currentSelectedId] - Identifiant de l'adresse à sélectionner en priorité.
+     * @returns {Promise<void>}
+     */
+    async function fetchAddresses(currentSelectedId?: string): Promise<void> {
         setLoading(true);
         setError(null);
         try {
@@ -103,7 +128,6 @@ export default function ShippingAddressSection({ onSelect }: { onSelect: (addr: 
             const list: Address[] = data || [];
             setAddresses(list);
 
-            // 
             let nextSelectedId: string | null = null;
             if (currentSelectedId && list.some(addr => addr.id === currentSelectedId)) {
                 nextSelectedId = currentSelectedId;
@@ -121,17 +145,22 @@ export default function ShippingAddressSection({ onSelect }: { onSelect: (addr: 
         }
     }
 
-    //
     useEffect(() => {
-        //
         fetchAddresses();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    /**
+     * Ouvre la modale de gestion des adresses.
+     */
     const handleManageAddresses = () => {
-        setShowManageModal(true); // Ouvre la modale AddressManager
+        setShowManageModal(true);
     };
 
+    /**
+     * Gère la sélection d'une adresse depuis la modale de sélection.
+     * @param {Address} addr - Adresse choisie.
+     */
     const handleSelectFromModal = (addr: Address) => {
         setSelectedAddressId(addr.id);
         onSelect(addr);

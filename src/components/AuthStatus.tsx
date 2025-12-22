@@ -5,6 +5,12 @@ import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { User as UserIcon } from "lucide-react";
 
+/**
+ * Affiche le bouton (et menu déroulant) de statut de connexion utilisateur.
+ * Gère la détection de l'utilisateur courant (via Supabase), la connexion/déconnexion/profil/adresses, et l'ouverture/fermeture du menu.
+ *
+ * @returns Ce composant affiche soit les actions utilisateur (profil/adresses/déconnexion) si connecté, soit les boutons de connexion/inscription.
+ */
 export default function AuthStatus() {
 
     const [user, setUser] = useState<User | null>(null);
@@ -14,6 +20,10 @@ export default function AuthStatus() {
     const menuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        /**
+         * À l'initialisation, récupère l'utilisateur courant via Supabase et installe un listener sur le changement d'état d'authentification.
+         * Nettoie le listener à la destruction du composant.
+         */
         const supabase = createClient();
         supabase.auth.getUser().then(({ data }) => {
             setUser(data.user);
@@ -27,8 +37,10 @@ export default function AuthStatus() {
         };
     }, []);
 
-    // Ferme le menu si clic en dehors
     useEffect(() => {
+        /**
+         * Ferme le menu utilisateur si clic détecté en dehors du dropdown.
+         */
         if (!open) return;
         function handleClickOutside(event: MouseEvent) {
             if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -39,6 +51,9 @@ export default function AuthStatus() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [open]);
 
+    /**
+     * Déconnecte l'utilisateur, vide le state et redirige vers /login.
+     */
     const handleLogout = async () => {
         const supabase = createClient();
         await supabase.auth.signOut();
@@ -47,17 +62,21 @@ export default function AuthStatus() {
         router.push("/login");
     };
 
+    /**
+     * Ouvre la page profil utilisateur.
+     */
     const handleProfile = () => {
         setOpen(false);
         router.push("/profile");
     };
 
+    /**
+     * Ouvre la page gestion des adresses utilisateur.
+     */
     const handleAddresses = () => {
         setOpen(false);
         router.push("/addresses");
     };
-
-
 
     if (loading) return null;
 

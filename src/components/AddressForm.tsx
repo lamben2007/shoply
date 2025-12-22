@@ -1,12 +1,23 @@
 import { useState } from "react";
 import type { Address } from "@/types/address";
 
+/**
+ * Props pour le composant AddressForm.
+ */
 interface AddressFormProps {
     initialAddress?: Partial<Address>;
     onSubmit: (address: Partial<Address>) => void;
     onCancel: () => void;
 }
 
+/**
+ * Formulaire d'édition ou création d'une adresse.
+ *
+ * @param initialAddress Adresse initiale à éditer/préremplir (optionnelle, partielle).
+ * @param onSubmit Callback appelée lors de la validation du formulaire avec la nouvelle adresse.
+ * @param onCancel Callback appelée lors de l'annulation de la modification/création d'adresse.
+ * @returns Le composant formulaire d'adresse.
+ */
 export default function AddressForm({ initialAddress = {}, onSubmit, onCancel }: AddressFormProps) {
     
     const [form, setForm] = useState<Partial<Address>>({
@@ -19,10 +30,18 @@ export default function AddressForm({ initialAddress = {}, onSubmit, onCancel }:
         ...initialAddress,
     });
 
+    /**
+     * Met à jour le formulaire local selon la saisie utilisateur.
+     * @param e L'événement de changement de champ (champ input).
+     */
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+    /**
+     * Gère la soumission du formulaire, appelle le callback parent avec la nouvelle adresse.
+     * @param e L'événement de soumission du formulaire.
+     */
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         onSubmit(form);
