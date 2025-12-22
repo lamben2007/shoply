@@ -1,6 +1,6 @@
 import { Address } from '@/types/address';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import AddressManager from './AddressManager';
 
 // Sous-composant : card affichée pour l'adresse sélectionnée
 function SelectedAddressCard({ address, onSelect }: {
@@ -84,42 +84,52 @@ function AddressSelectModal({
 }
 
 export default function ShippingAddressSection({ onSelect }: { onSelect: (addr: Address) => void }) {
-    const router = useRouter();
+
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
+    const [showManageModal, setShowManageModal] = useState(false);
 
-    useEffect(() => {
-        async function fetchAddresses() {
-            setLoading(true);
-            setError(null);
-            try {
-                const res = await fetch('/api/address');
-                if (!res.ok) throw new Error('Erreur de chargement des adresses');
-                const data = await res.json();
-                const list: Address[] = data || [];
-                setAddresses(list);
 
-                let defaultAddr = list.find(addr => addr.isDefaultShipping);
-                if (!defaultAddr && list.length > 0) {
-                    defaultAddr = list[0];
-                }
-                setSelectedAddressId(defaultAddr?.id ?? null);
-                if (defaultAddr) onSelect(defaultAddr);
-            } catch (e) {
-                setError((e instanceof Error ? e.message : String(e)) || 'Erreur inconnue');
-            } finally {
-                setLoading(false);
+    async function fetchAddresses(currentSelectedId?: string) {
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await fetch('/api/address');
+            if (!res.ok) throw new Error('Erreur de chargement des adresses');
+            const data = await res.json();
+            const list: Address[] = data || [];
+            setAddresses(list);
+
+            // 
+            let nextSelectedId: string | null = null;
+            if (currentSelectedId && list.some(addr => addr.id === currentSelectedId)) {
+                nextSelectedId = currentSelectedId;
+            } else {
+                const defaultAddr = list.find(addr => addr.isDefaultShipping) || list[0];
+                nextSelectedId = defaultAddr?.id ?? null;
             }
+            setSelectedAddressId(nextSelectedId);
+            const selectedAddr = list.find(addr => addr.id === nextSelectedId);
+            if (selectedAddr) onSelect(selectedAddr);
+        } catch (e) {
+            setError((e instanceof Error ? e.message : String(e)) || 'Erreur inconnue');
+        } finally {
+            setLoading(false);
         }
+    }
+
+    //
+    useEffect(() => {
+        //
         fetchAddresses();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleManageAddresses = () => {
-        router.push('/addresses');
+        setShowManageModal(true); // Ouvre la modale AddressManager
     };
 
     const handleSelectFromModal = (addr: Address) => {
@@ -171,6 +181,17 @@ export default function ShippingAddressSection({ onSelect }: { onSelect: (addr: 
             >
                 Gérer mes adresses
             </button>
+
+
+            <input type="checkbox" className="modal-toggle" checked={showManageModal} readOnly tabIndex={-1} />
+            <div className={`modal ${showManageModal ? "modal-open" : ""}`}>
+                <div className="modal-box w-11/12 max-w-5xl">
+                    <AddressManager onAddressesChanged={() => fetchAddresses(selectedAddressId ?? undefined)} />
+                    <div className="modal-action">
+                        <button onClick={() => setShowManageModal(false)} className="btn">Fermer</button>
+                    </div>
+                </div>
+            </div>
         </section>
     );
 }

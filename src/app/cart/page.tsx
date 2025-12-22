@@ -5,6 +5,7 @@ import { useCartStore } from '@/store/useCartStore';
 import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { CreditCard } from 'lucide-react';
 
 export default function CartPage() {
 
@@ -70,26 +71,41 @@ export default function CartPage() {
 
                 <div className="mt-8 text-right">
                     <p className="text-xl font-bold mb-4">Total : {total().toFixed(2)} €</p>
-                    <button
-                        onClick={() => {
-                            toast.warning(
-                                "Voulez-vous vraiment vider le panier ?",
-                                {
-                                    duration: 10000, // 10 secondes
-                                    action: {
-                                        label: "Confirmer",
-                                        onClick: () => {
-                                            clearCart();
-                                            toast.success("Panier vidé !");
-                                        },
+
+
+                    <div className='flex flex-col gap-4'>
+                        <button
+                            onClick={() => {
+                                toast.warning(
+                                    "Voulez-vous vraiment vider le panier ?",
+                                    {
+                                        duration: 10000, // 10 secondes
+                                        action: {
+                                            label: "Confirmer",
+                                            onClick: () => {
+                                                clearCart();
+                                                toast.success("Panier vidé !");
+                                            },
+                                        }
                                     }
-                                }
-                            );
-                        }}
-                        className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700"
-                    >
-                        Vider le panier
-                    </button>
+                                );
+                            }}
+                            className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700"
+                        >
+                            Vider le panier
+                        </button>
+
+
+                        <Link href={"/checkout"}
+                            className="flex items-center justify-center px-6 py-3 bg-blue-300 hover:bg-blue-200 transition-colors rounded-lg mb-1">
+                            <CreditCard className="w-5 h-5 mr-3" />
+                            <span>PASSER COMMANDE</span>
+                        </Link>
+
+                    </div>
+
+
+
                 </div>
             </div>
 
