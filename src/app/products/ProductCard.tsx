@@ -37,7 +37,7 @@ export default function ProductCard({ product }: Props) {
 
             {/* Informations sur le produit */}
             <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
-            <p>{product.id}</p>
+            {/* <p>{product.id}</p> */}
             <p className="text-gray-700 mb-2">{product.description}</p>
             <p className="text-lg font-bold mb-4">{product.price.toFixed(2)} €</p>
 
