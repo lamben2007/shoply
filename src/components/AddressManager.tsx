@@ -22,12 +22,23 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
         const fetchAddresses = async () => {
             try {
                 const res = await fetch('/api/address');
+                if (res.status === 401) {
+                    // Redirige vers la page de connexion
+                    window.location.href = '/login';
+                    return;
+                }
+                if (!res.ok) {
+                    // Pour d’autres erreurs serveur
+                    setAddresses([]);
+                    return;
+                }
                 const data = await res.json();
-                setAddresses(data);
+                setAddresses(Array.isArray(data) ? data : []);
             } catch {
                 setAddresses([]);
             }
         };
+
         fetchAddresses();
     }, []);
 
