@@ -1,80 +1,152 @@
-// import { NextResponse } from 'next/server';
-// import prisma from "@/lib/prisma";
-// import { z } from 'zod';
-// import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from "@/lib/prisma";
+import { createClient } from '@/lib/supabase/server';
+import { z } from 'zod';
+import type { OrderCreatePayload, OrderResponse } from './dto';
 
 
-// // Validation du corps de création de commande
-// const OrderSchema = z.object({
-//     fullname: z.string().min(1),
-//     email: z.email(),
-//     address: z.string().min(1),
-//     items: z.array(
-//         z.object({
-//             productId: z.string().min(1),
-//             quantity: z.number().min(1),
-//             price: z.number().min(0.01),
-//         })
-//     ).min(1),
-//     totalPrice: z.number().min(0.01),
-// });
+// Facteur utilitaire pour récupérer le profileId (mock ou prod)
+async function getProfileId(): Promise<string | null> {
+
+    // const supabase = await createClient();
+    // const { data: { user } } = await supabase.auth.getUser();
+    // return user?.id ?? null;
+
+    //-- MOCK pendant dev :
+    const mockProfileId = '0a6515da-7d91-4e3a-a951-b10b8ac67e02';
+    return mockProfileId;
+}
+
+const ORDER_STATUS = ['PENDING', 'PAID', 'SHIPPED', 'CANCELLED', 'COMPLETED'] as const;
+
+const orderItemInputSchema = z.object({
+    productId: z.uuid(),
+    name: z.string(),
+    price: z.union([z.string(), z.number()]),
+    quantity: z.number().int().min(1),
+    imageUrl: z.url().optional(),
+});
+
+const orderInputSchema = z.object({
+    status: z.enum(ORDER_STATUS),
+    total: z.union([z.string(), z.number()]),
+    shippingId: z.uuid(),
+    billingId: z.uuid(),
+    items: z.array(orderItemInputSchema).min(1),
+});
 
 
-export async function GET() {
+export async function POST(request: NextRequest) {
+    try {
+        const profileId = await getProfileId();
+        if (!profileId) {
+            return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+        }
 
-//     // 1. Crée le client supabase côté serveur (auth automatique via cookies)
-//     const supabase = await createClient();
+        // Validation et typage input
+        const json = await request.json();
+        const parsed = orderInputSchema.safeParse(json);
+        if (!parsed.success) {
+            return NextResponse.json({
+                error: "Invalid input",
+                details: parsed.error.issues,
+            }, { status: 400 });
+        }
 
-//     // 2. Récupère l'utilisateur connecté
-//     const { data: { user } } = await supabase.auth.getUser();
+        const payload: OrderCreatePayload = parsed.data;
 
-//     if (!user?.email) {
-//         return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-//     }
+        // Création de la commande
+        const createdOrder = await prisma.order.create({
+            data: {
+                userId: profileId,
+                status: payload.status,
+                total: Number(payload.total), // sécurité, convertit string vers number si besoin
+                shippingId: payload.shippingId,
+                billingId: payload.billingId,
+                items: {
+                    create: payload.items.map((item) => ({
+                        productId: item.productId,
+                        name: item.name,
+                        price: Number(item.price), // sécurité si le front envoie un string
+                        quantity: item.quantity,
+                        imageUrl: item.imageUrl,
+                    })),
+                },
+            },
+            include: {
+                items: true,
+            },
+        });
 
-//     // 3. Récupère les commandes avec le filtre email
-//     const orders = await prisma.order.findMany({
-//         where: { email: user.email },
-//         include: { items: true },
-//         orderBy: { createdAt: 'desc' },
-//     });
+        // Structure sortie typée OrderResponse
+        const response: OrderResponse = {
+            id: createdOrder.id,
+            status: createdOrder.status,
+            total: Number(createdOrder.total),
+            shippingId: createdOrder.shippingId,
+            billingId: createdOrder.billingId,
+            createdAt: createdOrder.createdAt.toISOString(),
+            updatedAt: createdOrder.updatedAt.toISOString(),
+            items: createdOrder.items.map(item => ({
+                id: item.id,
+                productId: item.productId ?? undefined,
+                name: item.name,
+                price: Number(item.price),
+                quantity: item.quantity,
+                imageUrl: item.imageUrl ?? undefined,
+            }))
+        };
 
-//     return NextResponse.json(orders);
+        return NextResponse.json(response as OrderResponse, { status: 201 });
+
+    } catch (error: unknown) {
+        let message = 'Erreur lors de la création de la commande';
+        if (error instanceof Error) message = error.message;
+        return NextResponse.json({ error: message }, { status: 500 });
+    }
 }
 
 
+export async function GET(request: NextRequest) {
+    try {
+        const profileId = await getProfileId();
+        if (!profileId) {
+            return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+        }
 
-export async function POST() {
-//     try {
-//         const data = await request.json();
-//         const parsed = OrderSchema.parse(data);
+        // On récupère toutes les commandes de l'utilisateur
+        const orders = await prisma.order.findMany({
+            where: { userId: profileId },
+            orderBy: { createdAt: 'desc' },
+            include: {
+                items: true,
+            },
+        });
 
-//         // Transaction de création commande + items
-//         const createdOrder = await prisma.order.create({
-//             data: {
-//                 fullname: parsed.fullname,
-//                 email: parsed.email,
-//                 address: parsed.address,
-//                 totalPrice: parsed.totalPrice,
-//                 items: {
-//                     create: parsed.items.map((item) => ({
-//                         productId: item.productId,
-//                         quantity: item.quantity,
-//                         price: item.price,
-//                     })),
-//                 },
-//             },
-//             include: {
-//                 items: true,
-//             },
-//         });
-//         return NextResponse.json(createdOrder, { status: 201 });
-//     } catch (error) {
-//         if (error instanceof z.ZodError) {
-//             return NextResponse.json({ error: error.issues }, { status: 400 });
-//         } else {
-//             console.error(error)
-//             return NextResponse.json({ error: 'Erreur lors de la création.' }, { status: 500 });
-//         }
-//     }
+        // On mappe chaque commande à la forme OrderResponse
+        const response: OrderResponse[] = orders.map(order => ({
+            id: order.id,
+            status: order.status,
+            total: Number(order.total),
+            shippingId: order.shippingId,
+            billingId: order.billingId,
+            createdAt: order.createdAt.toISOString(),
+            updatedAt: order.updatedAt.toISOString(),
+            items: order.items.map(item => ({
+                id: item.id,
+                productId: item.productId ?? undefined,
+                name: item.name,
+                price: Number(item.price),
+                quantity: item.quantity,
+                imageUrl: item.imageUrl ?? undefined,
+            }))
+        }));
+
+        return NextResponse.json(response, { status: 200 });
+
+    } catch (error: unknown) {
+        let message = 'Erreur lors de la récupération des commandes';
+        if (error instanceof Error) message = error.message;
+        return NextResponse.json({ error: message }, { status: 500 });
+    }
 }

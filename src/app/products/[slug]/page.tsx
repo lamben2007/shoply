@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { Product } from "@/types/product"
 
 export default function ProductPage() {
+    
     const { slug } = useParams<{ slug: string }>();
     const { products } = useProductStore();
     const [product, setProduct] = useState<Product | null>(null);

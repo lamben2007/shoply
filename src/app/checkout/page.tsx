@@ -11,6 +11,7 @@ import { Address } from "@/types/address";
 import { PaymentInfo } from "@/types/payment";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createOrder } from "@/lib/api/orders";
 
 
 type DeliveryOption = {
@@ -36,7 +37,35 @@ export default function CheckOut() {
 
 
     //
-    const { items } = useCartStore();
+    const { items, total } = useCartStore();
+
+
+
+    //
+    async function submitCommand(): Promise<string | null> {
+        try {
+            if (!address || !address.id) throw new Error("Veuillez sélectionner une adresse de livraison valide.");
+            if (!items || items.length === 0) throw new Error("Votre panier est vide.");
+
+            const newOrder = await createOrder({
+                status: 'PAID',
+                total: total(),
+                shippingId: address.id,
+                billingId: address.id,
+                items: items
+            })
+
+            console.log("nouvelle commande:", newOrder)
+
+            return newOrder.id
+
+        } catch (e) {
+            alert('Erreur lors de la commande : ' + (e as Error).message);
+            return null
+        }
+    }
+
+
 
     // --- Fonction dédiée de confirmation ---
     const handleConfirm = async () => {
@@ -50,7 +79,10 @@ export default function CheckOut() {
         await new Promise(resolve => setTimeout(resolve, 1500));
         setLoading(false);
         // alert("Commande simulée avec succès !");
-        router.push("/confirmation")
+        const orderId = await submitCommand()
+        if (orderId) {
+            router.push(`/confirmation/${orderId}`);
+        }
     };
 
 
