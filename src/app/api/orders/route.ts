@@ -5,16 +5,21 @@ import { z } from 'zod';
 import type { OrderCreatePayload, OrderResponse } from './dto';
 
 
-// Facteur utilitaire pour récupérer le profileId (mock ou prod)
+/**
+ * Utilitaire pour récupérer l'identifiant du profil utilisateur courant
+ * (mock pour dev, ou vrai dans la version production).
+ *
+ * @returns L'identifiant du profil utilisateur, ou null si non connecté
+ */
 async function getProfileId(): Promise<string | null> {
 
-    // const supabase = await createClient();
-    // const { data: { user } } = await supabase.auth.getUser();
-    // return user?.id ?? null;
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    return user?.id ?? null;
 
     //-- MOCK pendant dev :
-    const mockProfileId = '0a6515da-7d91-4e3a-a951-b10b8ac67e02';
-    return mockProfileId;
+    // const mockProfileId = '0a6515da-7d91-4e3a-a951-b10b8ac67e02';
+    // return mockProfileId;
 }
 
 const ORDER_STATUS = ['PENDING', 'PAID', 'SHIPPED', 'CANCELLED', 'COMPLETED'] as const;
@@ -36,6 +41,13 @@ const orderInputSchema = z.object({
 });
 
 
+/**
+ * Handler API route POST /api/orders
+ * Crée une nouvelle commande à partir du payload envoyé par le client (authentifié).
+ *
+ * @param request - La requête HTTP Next.js contenant le payload de création de commande
+ * @returns Réponse HTTP contenant la commande créée ou un message d'erreur
+ */
 export async function POST(request: NextRequest) {
     try {
         const profileId = await getProfileId();
@@ -107,7 +119,14 @@ export async function POST(request: NextRequest) {
 }
 
 
-export async function GET(request: NextRequest) {
+/**
+ * Handler API route GET /api/orders
+ * Retourne la liste des commandes du client authentifié.
+ * Si aucune commande, retourne un tableau vide (cas non erreur).
+ *
+ * @returns Réponse HTTP contenant un tableau de commandes ou une erreur si utilisateur non authentifié
+ */
+export async function GET() {
     try {
         const profileId = await getProfileId();
         if (!profileId) {

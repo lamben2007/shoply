@@ -9,10 +9,10 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   { href: '/profile', label: 'Profile', icon: <User className="w-5 h-5 mr-3" /> },
-  { href: '/favoris', label: 'Favoris', icon: <Heart className="w-5 h-5 mr-3" /> },
-  { href: '/cart', label: 'Chariot', icon: <ShoppingCart className="w-5 h-5 mr-3" /> },
-  { href: '/paiement', label: 'Paiement', icon: <CreditCard className="w-5 h-5 mr-3" /> },
   { href: '/orders', label: 'Mes commandes', icon: <Package className="w-5 h-5 mr-3" /> },
+  // { href: '/cart', label: 'Chariot', icon: <ShoppingCart className="w-5 h-5 mr-3" /> },
+  // { href: '/favoris', label: 'Favoris', icon: <Heart className="w-5 h-5 mr-3" /> },
+  // { href: '/paiement', label: 'Paiement', icon: <CreditCard className="w-5 h-5 mr-3" /> },
 ];
 
 const VerticalMenuCart = () => (

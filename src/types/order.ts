@@ -20,7 +20,7 @@ export type OrderResponse = {
   total: number;
   shippingId: string;
   billingId: string;
-  createdAt?: string;
-  updatedAt?: string;
-  items: OrderItemInput[]; // ou OrderItem complet selon ta structure backend
+  createdAt: string;
+  updatedAt: string;
+  items: OrderItemInput[]; 
 };

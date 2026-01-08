@@ -32,7 +32,6 @@ export default function ConfirmationPage() {
             setLoading(true);
             try {
                 const myOrder = await getOrderById(orderId);
-                if (!myOrder) throw new Error("Commande introuvable");
                 setOrder(myOrder);
             } catch (err: unknown) {
                 const message = err instanceof Error ? err.message : "Erreur inconnue";

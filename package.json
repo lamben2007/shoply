@@ -1,6 +1,6 @@
 {
   "name": "shoply",
-  "version": "Version du 07/01/2026",
+  "version": "Version du 08/01/2026",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -16,6 +16,7 @@
     "@supabase/supabase-js": "^2.87.1",
     "clsx": "^2.1.1",
     "daisyui": "^5.5.14",
+    "dayjs": "^1.11.19",
     "dotenv": "^17.2.3",
     "framer-motion": "^12.23.25",
     "lucide-react": "^0.561.0",

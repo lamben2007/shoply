@@ -8,10 +8,10 @@ import PaymentMethodSection from "@/components/PaymentMethodSection";
 import ShippingAddressSection from "@/components/ShippingAddressSection";
 import { useCartStore } from "@/store/useCartStore";
 import { Address } from "@/types/address";
-import { PaymentInfo } from "@/types/payment";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/lib/api/orders";
+// import { PaymentInfo } from "@/types/payment";
 
 
 type DeliveryOption = {
@@ -23,11 +23,23 @@ type DeliveryOption = {
 };
 
 
+/**
+ * CheckOut component
+ *
+ * Page de validation de commande :
+ * - Permet à l'utilisateur de sélectionner une adresse de livraison, un mode de livraison et un mode de paiement,
+ * - Affiche le récapitulatif de la commande,
+ * - Gère l'acceptation des CGV et la confirmation de la commande,
+ * - Crée la commande et redirige vers la page de confirmation.
+ *
+ * @component
+ * @returns Page de validation de la commande
+ */
 export default function CheckOut() {
 
     const [address, setAddress] = useState<Address | undefined>(undefined);
     const [deliveryMethod, setDeliveryMethod] = useState<DeliveryOption | undefined>(undefined)
-    const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | undefined>();
+    // const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | undefined>();
     const [paymentValid, setPaymentValid] = useState(false);
     const [acceptedCGV, setAcceptedCGV] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -35,13 +47,17 @@ export default function CheckOut() {
 
     const router = useRouter();
 
-
     //
-    const { items, total } = useCartStore();
+    const { items, total, clearCart } = useCartStore();
 
 
 
-    //
+    /**
+    * Crée une nouvelle commande à partir du panier courant.
+    * Affiche une alerte en cas d'erreur.
+    *
+    * @returns L'identifiant de la commande créée, ou null si erreur.
+    */
     async function submitCommand(): Promise<string | null> {
         try {
             if (!address || !address.id) throw new Error("Veuillez sélectionner une adresse de livraison valide.");
@@ -55,19 +71,23 @@ export default function CheckOut() {
                 items: items
             })
 
-            console.log("nouvelle commande:", newOrder)
-
             return newOrder.id
 
         } catch (e) {
-            alert('Erreur lors de la commande : ' + (e as Error).message);
+            console.log('Erreur lors de la commande : ' + (e as Error).message);
             return null
         }
     }
 
 
 
-    // --- Fonction dédiée de confirmation ---
+    /**
+    * Procédure de confirmation : vérifie que tous les champs sont valides,
+    * déclenche la création de commande, puis redirige.
+    *
+    * @remarks
+    * Gère les messages d'erreur utilisateur.
+    */
     const handleConfirm = async () => {
         setError(null);
         if (!address) return setError("Veuillez indiquer une adresse.");
@@ -78,9 +98,9 @@ export default function CheckOut() {
         // Simule un traitement
         await new Promise(resolve => setTimeout(resolve, 1500));
         setLoading(false);
-        // alert("Commande simulée avec succès !");
         const orderId = await submitCommand()
         if (orderId) {
+            clearCart()
             router.push(`/confirmation/${orderId}`);
         }
     };
@@ -101,7 +121,7 @@ export default function CheckOut() {
 
             <div className="border-2">
                 <PaymentMethodSection
-                    onChange={(info) => setPaymentInfo(info)}
+                    // onChange={(info) => setPaymentInfo(info)}
                     onValidChange={(valid) => setPaymentValid(valid)}
                 />
             </div>
@@ -122,22 +142,6 @@ export default function CheckOut() {
                     onConfirm={handleConfirm}
                 />
             </div>
-
-
-
-            {/* ... autres sections à venir ... */}
-
-            <pre>{JSON.stringify(address)}</pre>
-            <pre>{JSON.stringify(deliveryMethod)}</pre>
-
-            <pre>
-                {JSON.stringify(paymentInfo)}
-                paymentValid:{JSON.stringify(paymentValid)}
-            </pre>
-
-            <pre>
-                acceptedCGV:{JSON.stringify(acceptedCGV)}
-            </pre>
 
         </main>
     );
