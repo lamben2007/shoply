@@ -78,6 +78,14 @@ export default function AuthStatus() {
         router.push("/addresses");
     };
 
+    /**
+     * Ouvre la page avec la liste des commandes effectuées par l'utilisateur.
+     */
+    const handleOrders = () => {
+        setOpen(false);
+        router.push("/orders");
+    };
+
     if (loading) return null;
 
     return (
@@ -97,11 +105,12 @@ export default function AuthStatus() {
             </button>
 
             {open && (
-                <ul className="menu dropdown-content absolute right-0 mt-2 z-20 p-2 shadow bg-base-100 rounded-box w-52">
+                <ul className="menu dropdown-content absolute right-0 mt-8 z-20 p-2 shadow bg-base-100 rounded-box w-52">
                     {user ? (
                         <>
                             <li><button onClick={handleProfile}>Voir profil</button></li>
                             <li><button onClick={handleAddresses}>Adresses</button></li>
+                            <li><button onClick={handleOrders}>Commandes</button></li>
                             <li><button onClick={handleLogout} className="text-red-600">Déconnexion</button></li>
                         </>
                     ) : (

@@ -11,6 +11,15 @@ type Props = {
     product: Product;
 };
 
+
+/**
+ * Composant d'affichage d'une carte produit, incluant aperçu visuel,
+ * informations et actions panier. Utilise un hook custom pour gérer
+ * les actions du panier en lien avec ce produit.
+ *
+ * @param props - Objet contenant le produit à afficher
+ * @returns Carte produit avec actions d'ajout/retrait panier
+ */
 export default function ProductCard({ product }: Props) {
     // Custom hook factorisé qui centralise toute la logique panier
     // Fournit l'item du panier lié au produit, et les handlers pour les actions
@@ -24,14 +33,13 @@ export default function ProductCard({ product }: Props) {
     // Rendu principal du composant
     return (
         <div className="border rounded-lg p-4 shadow-sm hover:shadow-lg transition-shadow duration-200">
-            {/* Affichage de l’image produit via next/image */}
-            <div className="relative w-full h-64 mb-4">
+            <div className="relative w-full aspect-square mb-4">
                 <Image
                     src={product.imagePreview}
                     alt={product.name}
-                    width={400}
-                    height={400}
+                    fill
                     className="rounded-lg object-cover"
+                    sizes="(max-width: 768px) 100vw, 400px"
                 />
             </div>
 
