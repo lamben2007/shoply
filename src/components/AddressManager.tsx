@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Address } from '@/types/address';
 import AddressForm from '@/components/AddressForm';
+import Portal from "@/components/Portal";
 
 /**
  * Gestionnaire d'adresses utilisateur : permet d'afficher, créer, modifier, supprimer et définir l'adresse de livraison par défaut.
@@ -17,7 +18,7 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
     useEffect(() => {
         /**
          * Récupère les adresses à l'initialisation du composant.
-         * @returns {Promise<void>}
+         * @returns
          */
         const fetchAddresses = async () => {
             try {
@@ -113,77 +114,79 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
     };
 
 
-    //
+    // Rendu principal : liste des adresses et formulaire modal affiché si besoin
     return (
         <main>
-            <h1>Mes adresses</h1>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+            <h1 className="text-2xl font-bold mb-6">Mes adresses</h1>
+            <div className="flex flex-wrap gap-3">
                 {addresses.map(addr => (
-                    <div key={addr.id} style={{
-                        border: '1px solid #bbb',
-                        borderRadius: 8,
-                        padding: 16,
-                        minWidth: 260,
-                        position: 'relative',
-                        background: addr.isDefaultShipping ? '#e7f5e7' : '#fff'
-                    }}>
-
+                    <div
+                        key={addr.id}
+                        className={`
+                            border rounded-lg p-4 min-w-[260px] flex gap-2.5 flex-col
+                            ${addr.isDefaultShipping ? 'bg-green-50 border-green-200' : 'bg-white border-gray-300'}
+                        `}
+                    >
                         <div>
                             <strong>{addr.name}</strong><br />
                             {addr.street}{addr.complement && `, ${addr.complement}`}<br />
                             {addr.zip} {addr.city}<br />
                             {addr.country}
                         </div>
-                        <hr />
-                        <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                            <button onClick={() => handleEdit(addr)}>Modifier</button>
-                            <button onClick={() => handleDelete(addr.id)} style={{ color: '#c00' }}>Supprimer</button>
+                        <hr className="my-2" />
+                        <div className="flex gap-2">
+                            <button
+                                className="btn btn-sm btn-outline"
+                                onClick={() => handleEdit(addr)}
+                            >
+                                Modifier
+                            </button>
+                            <button
+                                className="btn btn-sm btn-outline text-red-600 border-red-300 hover:bg-red-50"
+                                onClick={() => handleDelete(addr.id)}
+                            >
+                                Supprimer
+                            </button>
                             {!addr.isDefaultShipping && (
-                                <button onClick={() => handleDefaultShipping(addr.id)}>Mettre par défaut (livraison)</button>
+                                <button
+                                    className="btn btn-sm btn-outline"
+                                    onClick={() => handleDefaultShipping(addr.id)}
+                                >
+                                    Mettre par défaut (livraison)
+                                </button>
                             )}
                         </div>
                         <div>
                             {addr.isDefaultShipping && (
-                                <span style={{
-                                    background: '#22c55e', color: '#fff',
-                                    padding: '2px 8px', borderRadius: 8, fontSize: 12
-                                }}>Livraison par défaut</span>
+                                <span className="bg-green-500 text-white px-2 py-1 rounded text-xs ml-1">Livraison par défaut</span>
                             )}
                         </div>
                     </div>
                 ))}
                 <button
+                    type="button"
                     onClick={() => { setEditAddress(null); setShowForm(true); }}
-                    style={{ minWidth: 260, minHeight: 120, border: '2px dashed #bbb', fontSize: 24 }}>
+                    className="min-w-[260px] min-h-[120px] border-2 border-dashed border-gray-300 flex items-center justify-center text-3xl text-gray-400 hover:bg-gray-50 rounded-lg transition"
+                >
                     + Ajouter une adresse
                 </button>
             </div>
 
-
-
             {showForm && (
-                <div className="modal modal-open">
-                    <div className="modal-box" style={{ minWidth: 240 }}>
-                        <AddressForm
-                            initialAddress={editAddress || undefined}
-                            onSubmit={handleFormValidate}
-                            onCancel={() => { setShowForm(false); setEditAddress(null); }}
-                        />
-                        <div className="modal-action">
-                            <button className="btn" onClick={() => { setShowForm(false); setEditAddress(null); }}>
-                                Annuler
-                            </button>
+                <Portal>
+                    <div className="modal modal-open">
+                        <div className="modal-box max-h-[90vh] overflow-auto min-w-60">
+                            <AddressForm
+                                initialAddress={editAddress || undefined}
+                                onSubmit={handleFormValidate}
+                                onCancel={() => { setShowForm(false); setEditAddress(null); }}
+                            />
                         </div>
                     </div>
-                    <div className="modal-backdrop" onClick={() => { setShowForm(false); setEditAddress(null); }} />
-                </div>
+                </Portal>
             )}
-
-
-
         </main>
     );
-
 }
 
 export default AddressManager

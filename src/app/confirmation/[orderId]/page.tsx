@@ -67,13 +67,13 @@ export default function ConfirmationPage() {
 
     return (
         <main className="max-w-xl mx-auto py-8 px-4">
-            <h1 className="text-2xl font-bold mb-2">Thank you for your order!</h1>
-            <p className="mb-4">Order number: <b>{order.id}</b></p>
+            <h1 className="text-2xl font-bold mb-2">Merci pour votre commande !</h1>
+            <p className="mb-4">N° commande: <b>{order.id}</b></p>
             {/* Liste des articles de la commande */}
             <ul className="mb-4 bg-gray-100 p-4 rounded-lg">
                 {order.items.map(item => (
                     <li key={item.productId} className="mb-1 last:mb-0">
-                        {item.name} × {item.quantity} — {item.price}€ each
+                        {item.name} x {item.quantity} - {item.price}€ prix unitaire
                     </li>
                 ))}
             </ul>

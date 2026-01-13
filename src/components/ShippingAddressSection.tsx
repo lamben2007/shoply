@@ -213,14 +213,17 @@ export default function ShippingAddressSection({ onSelect }: { onSelect: (addr: 
 
 
             <input type="checkbox" className="modal-toggle" checked={showManageModal} readOnly tabIndex={-1} />
+
             <div className={`modal ${showManageModal ? "modal-open" : ""}`}>
-                <div className="modal-box w-11/12 max-w-5xl">
+                <div className="modal-box w-11/12 max-w-5xl flex flex-col">
                     <AddressManager onAddressesChanged={() => fetchAddresses(selectedAddressId ?? undefined)} />
-                    <div className="modal-action">
+                    {/* Bouton d'action en pied de modal, toujours visible */}
+                    <div className="modal-action pt-4">
                         <button onClick={() => setShowManageModal(false)} className="btn">Fermer</button>
                     </div>
                 </div>
             </div>
+
         </section>
     );
 }

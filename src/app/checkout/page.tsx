@@ -108,41 +108,44 @@ export default function CheckOut() {
 
     //
     return (
-        <main>
+        <div>
             <h1 className="font-bold text-3xl pb-1">Validation de votre commande</h1>
 
-            <div className="border-2">
-                <ShippingAddressSection onSelect={setAddress} />
+            <div className="flex flex-col gap-5">
+
+                <div className="border-b-2 pb-2.5">
+                    <ShippingAddressSection onSelect={setAddress} />
+                </div>
+
+                <div className="border-b-2 pb-2.5">
+                    <DeliveryMethodSection onSelect={setDeliveryMethod} />
+                </div>
+
+                <div className="border-b-2 pb-2.5">
+                    <PaymentMethodSection
+                        onValidChange={(valid) => setPaymentValid(valid)}
+                    />
+                </div>
+
+                <div className="border-b-2 pb-2.5">
+                    <OrderSummarySection items={items} deliveryCost={0} />
+                </div>
+
+                <div className="border-b-2 pb-2.5">
+                    <AcceptCGVSection checked={acceptedCGV} onChange={setAcceptedCGV} />
+                </div>
+
+                <div className="border-b-2 pb-2.5">
+                    <ConfirmButtonSection
+                        disabled={!address || !deliveryMethod || !paymentValid || !acceptedCGV}
+                        loading={loading}
+                        error={error}
+                        onConfirm={handleConfirm}
+                    />
+                </div>
+
             </div>
 
-            <div className="border-2">
-                <DeliveryMethodSection onSelect={setDeliveryMethod} />
-            </div>
-
-            <div className="border-2">
-                <PaymentMethodSection
-                    // onChange={(info) => setPaymentInfo(info)}
-                    onValidChange={(valid) => setPaymentValid(valid)}
-                />
-            </div>
-
-            <div className="border-2">
-                <OrderSummarySection items={items} deliveryCost={0} />
-            </div>
-
-            <div className="border-2">
-                <AcceptCGVSection checked={acceptedCGV} onChange={setAcceptedCGV} />
-            </div>
-
-            <div className="border-2">
-                <ConfirmButtonSection
-                    disabled={!address || !deliveryMethod || !paymentValid || !acceptedCGV}
-                    loading={loading}
-                    error={error}
-                    onConfirm={handleConfirm}
-                />
-            </div>
-
-        </main>
+        </div>
     );
 }

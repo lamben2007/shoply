@@ -15,7 +15,7 @@ const fakeCardData = {
 };
 
 const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
-
+    
     const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("card");
     const [card, setCard] = useState({ name: "", number: "", expiry: "", cvv: "" });
     const [paypalConnected, setPaypalConnected] = useState(false);
@@ -34,7 +34,6 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
         paypalUser: selectedMethod === "paypal" && paypalConnected ? fakePaypalUser : undefined,
     };
 
-    // Gestion du "lift state up"
     useEffect(() => {
         if (onChange) onChange(paymentInfo);
         if (onValidChange) {
@@ -56,7 +55,6 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
         setCard(fakeCardData);
     };
 
-    // Génère le message d'erreur à la volée (pas de state inutile pour cardError)
     function getCardError(): string | null {
         if (selectedMethod !== "card") return null;
         if (!card.name && !card.number && !card.expiry && !card.cvv) return null;
@@ -70,9 +68,9 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
 
     return (
         <section>
-            <h2>3. Mode de paiement</h2>
-            <div>
-                <label>
+            <h2 className='font-bold text-2xl mb-4'>3. Mode de paiement</h2>
+            <div className="flex flex-wrap gap-6 mb-4">
+                <label className="flex items-center gap-2 cursor-pointer">
                     <input
                         type="radio"
                         name="payment"
@@ -82,10 +80,11 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
                             setSelectedMethod("card");
                             setPaypalConnected(false);
                         }}
+                        className="accent-blue-600"
                     />
-                    Carte bancaire
+                    <span>Carte bancaire</span>
                 </label>
-                <label style={{ marginLeft: "2rem" }}>
+                <label className="flex items-center gap-2 cursor-pointer">
                     <input
                         type="radio"
                         name="payment"
@@ -95,11 +94,12 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
                             setSelectedMethod("paypal");
                             setCard({ name: "", number: "", expiry: "", cvv: "" });
                         }}
+                        className="accent-blue-600"
                     />
-                    PayPal
+                    <span>PayPal</span>
                 </label>
-                {/* Facultatif mode wire */}
-                <label style={{ marginLeft: "2rem" }}>
+                {/* Mode virement (facultatif) */}
+                <label className="flex items-center gap-2 cursor-pointer">
                     <input
                         type="radio"
                         name="payment"
@@ -110,17 +110,18 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
                             setPaypalConnected(false);
                             setCard({ name: "", number: "", expiry: "", cvv: "" });
                         }}
+                        className="accent-blue-600"
                     />
-                    Virement bancaire
+                    <span>Virement bancaire</span>
                 </label>
             </div>
 
             {/* Formulaire Carte */}
             {selectedMethod === "card" && (
-                <div style={{ margin: "1rem 0", maxWidth: 350 }}>
-                    <div>
-                        <label>
-                            Nom sur la carte<br />
+                <div className="bg-gray-50 rounded-xl p-5 mb-4 w-full max-w-md">
+                    <div className="mb-4">
+                        <label className="block font-medium mb-1">
+                            Nom sur la carte
                             <input
                                 type="text"
                                 name="name"
@@ -128,12 +129,13 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
                                 onChange={onCardChange}
                                 placeholder="Jean Dupont"
                                 autoComplete="cc-name"
+                                className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
                             />
                         </label>
                     </div>
-                    <div>
-                        <label>
-                            Numéro de carte<br />
+                    <div className="mb-4">
+                        <label className="block font-medium mb-1">
+                            Numéro de carte
                             <input
                                 type="text"
                                 name="number"
@@ -142,12 +144,13 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
                                 maxLength={19}
                                 placeholder="1234 5678 9012 3456"
                                 autoComplete="cc-number"
+                                className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
                             />
                         </label>
                     </div>
-                    <div style={{ display: "flex", gap: "1rem" }}>
-                        <label>
-                            Expiration (MM/AA)<br />
+                    <div className="flex gap-4 mb-4">
+                        <label className="flex-1 font-medium">
+                            Expiration (MM/AA)
                             <input
                                 type="text"
                                 name="expiry"
@@ -156,10 +159,11 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
                                 maxLength={5}
                                 placeholder="09/26"
                                 autoComplete="cc-exp"
+                                className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
                             />
                         </label>
-                        <label>
-                            CVV<br />
+                        <label className="flex-1 font-medium">
+                            CVV
                             <input
                                 type="text"
                                 name="cvv"
@@ -168,25 +172,33 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
                                 maxLength={3}
                                 placeholder="123"
                                 autoComplete="cc-csc"
+                                className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
                             />
                         </label>
                     </div>
-                    <div style={{ display: "flex", gap: "1rem", marginTop: 12 }}>
-                        <button type="button" onClick={simulateCardInput}>
+                    <div className="flex gap-4 mt-2">
+                        <button
+                            type="button"
+                            onClick={simulateCardInput}
+                            className="btn btn-outline btn-sm"
+                        >
                             Simuler la saisie
                         </button>
                     </div>
-                    {getCardError() && <div style={{ color: "red", marginTop: 8 }}>{getCardError()}</div>}
+                    {getCardError() && (
+                        <div className="text-red-600 mt-3">{getCardError()}</div>
+                    )}
                 </div>
             )}
 
             {/* Simulation PayPal */}
             {selectedMethod === "paypal" && (
-                <div style={{ margin: "1rem 0" }}>
+                <div className="bg-gray-50 rounded-xl p-5 mb-4 w-full max-w-md">
                     {!paypalConnected ? (
                         <button
                             onClick={() => setPaypalConnected(true)}
                             aria-label="Simuler la connexion PayPal"
+                            className="btn btn-outline btn-sm"
                         >
                             Se connecter à PayPal
                         </button>
@@ -200,7 +212,7 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
 
             {/* Simulation Virement */}
             {selectedMethod === "wire" && (
-                <div style={{ margin: "1rem 0", fontSize: "0.9rem" }}>
+                <div className="bg-gray-50 rounded-xl p-5 mb-4 w-full max-w-md text-sm">
                     <strong>Instructions de virement :</strong><br />
                     IBAN : FR76 XXXX XXXX XXXX XXXX XXXX XXX<br />
                     BIC : XXXXXXXX<br />
@@ -208,7 +220,7 @@ const PaymentMethodSection = ({ onChange, onValidChange }: Props) => {
                 </div>
             )}
 
-            <div style={{ fontStyle: "italic", color: "#888", marginTop: "1.5rem" }}>
+            <div className="italic text-gray-500 mt-8 text-sm">
                 Simulation – aucune donnée réelle transmise.
             </div>
         </section>

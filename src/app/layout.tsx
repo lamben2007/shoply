@@ -36,6 +36,7 @@ export default function RootLayout({
 
         <main className="px-6 py-10 max-w-6xl mx-auto my-18">
           {children}
+          <div id="modal-root" />
         </main>
 
         <Footer />

@@ -37,20 +37,15 @@ interface DeliveryMethodSectionProps {
 
 const DeliveryMethodSection = ({ onSelect }: DeliveryMethodSectionProps) => {
 
-    // const [selected, setSelected] = useState<string>('standard');
     const [selected, setSelected] = useState<string>('standard');
-
-
 
     // Notifier l’option par défaut au parent au montage.
     useEffect(() => {
         if (onSelect) {
-            // const found = deliveryOptions.find(opt => opt.id === 'standard');
             const found = deliveryOptions.find(opt => opt.id === selected);
             if (found) onSelect(found);
         }
-    }, [onSelect, selected]); // appelé une seule fois au montage
-
+    }, [onSelect, selected]);
 
     //
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,25 +59,34 @@ const DeliveryMethodSection = ({ onSelect }: DeliveryMethodSectionProps) => {
     //
     return (
         <form>
-            <h2>Choisissez votre mode de livraison</h2>
+            <h2 className='font-bold text-2xl mb-2'>Choisissez votre mode de livraison</h2>
             {deliveryOptions.map(option => (
-                <label key={option.id} style={{ display: 'block', marginBottom: 8 }}>
+                <label
+                    key={option.id}
+                    className="mb-2 cursor-pointer p-3 rounded border border-gray-200 hover:bg-gray-50 flex items-center gap-3 transition"
+                >
                     <input
                         type="radio"
                         name="livraison"
                         value={option.id}
                         checked={selected === option.id}
                         onChange={handleChange}
+                        className="mr-3 accent-blue-600"
                     />
-                    <strong>{option.label}</strong> — {option.cost === 0 ? 'Gratuit' : `${option.cost.toFixed(2)}€`} — {option.delay}
-                    {option.description && (
-                        <span style={{ marginLeft: 8, fontStyle: 'italic', color: '#555' }}>
-                            {option.description}
-                        </span>
-                    )}
+                    <div>
+                        <span className="font-semibold">{option.label}</span>
+                        <span className="mx-2 text-gray-500">—</span>
+                        <span className="font-medium">{option.cost === 0 ? 'Gratuit' : `${option.cost.toFixed(2)}€`}</span>
+                        <span className="mx-2 text-gray-500">—</span>
+                        <span>{option.delay}</span>
+                        {option.description && (
+                            <span className="ml-3 italic text-gray-400">
+                                {option.description}
+                            </span>
+                        )}
+                    </div>
                 </label>
             ))}
-
         </form>
     );
 };
