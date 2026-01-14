@@ -91,7 +91,7 @@ export default function AuthStatus() {
     return (
         <div ref={menuRef} className="relative flex items-center gap-2">
             {user && (
-                <span className="text-sm font-medium text-base-content max-w-[140px]" title={user.email ?? undefined}>
+                <span className="hidden md:block text-sm font-medium text-base-content max-w-[140px]" title={user.email ?? undefined}>
                     {user.email}
                 </span>
             )}
@@ -100,6 +100,7 @@ export default function AuthStatus() {
                 aria-label={user ? "Profil utilisateur" : "Se connecter"}
                 onClick={() => setOpen((v) => !v)}
                 type="button"
+                title={user?.email || undefined}
             >
                 <UserIcon className="w-6 h-6" />
             </button>

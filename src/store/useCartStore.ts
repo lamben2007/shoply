@@ -1,6 +1,6 @@
 import { CartItem } from '@/types/cart';
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
 
 type CartState = {
     items: CartItem[];
@@ -14,51 +14,54 @@ type CartState = {
 
 export const useCartStore = create<CartState>()(
     devtools(
+        persist(
+            (set, get) => ({
+                items: [],
 
-        (set, get) => ({
-            items: [],
+                getItemById: (id) => {
+                    return get().items.find((item) => item.productId === id);
+                },
 
-            getItemById: (id) => {
-                return get().items.find((item) => item.productId === id);
-            },
+                addItem: (item) => {
+                    const existing = get().items.find((i) => i.productId === item.productId);
+                    if (existing) {
+                        set({
+                            items: get().items.map((i) =>
+                                i.productId === item.productId ? { ...i, quantity: i.quantity + item.quantity } : i
+                            ),
+                        });
+                    } else {
+                        set({ items: [...get().items, item] });
+                    }
+                },
 
-            addItem: (item) => {
-                const existing = get().items.find((i) => i.productId === item.productId);
-                if (existing) {
+                removeItem: (id) => {
+                    set({ items: get().items.filter((i) => i.productId !== id) });
+                },
+
+                updateQuantity: (id, quantity) => {
                     set({
                         items: get().items.map((i) =>
-                            i.productId === item.productId ? { ...i, quantity: i.quantity + item.quantity } : i
+                            i.productId === id ? { ...i, quantity: quantity } : i
                         ),
                     });
-                } else {
-                    set({ items: [...get().items, item] });
-                }
-            },
+                },
 
-            removeItem: (id) => {
-                set({ items: get().items.filter((i) => i.productId !== id) });
-            },
+                clearCart: () => set({ items: [] }),
 
-            updateQuantity: (id, quantity) => {
-                set({
-                    items: get().items.map((i) =>
-                        i.productId === id ? { ...i, quantity: quantity } : i
-                    ),
-                });
-            },
-
-            clearCart: () => set({ items: [] }),
-
-            total: () => {
-                return get().items.reduce(
-                    (acc, i) => acc + i.price * i.quantity, 0
-                );
-            },
-        }),
-
+                total: () => {
+                    return get().items.reduce(
+                        (acc, i) => acc + i.price * i.quantity, 0
+                    );
+                },
+            }),
+            {
+                name: "cart-storage", // Clé utilisée dans localStorage
+            }
+        ),
         {
             name: "ProductStore",
             enabled: process.env.NODE_ENV === "development"
         }
-
-    ));
+    )
+);

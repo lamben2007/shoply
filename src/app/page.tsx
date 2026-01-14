@@ -7,7 +7,7 @@ export default function Home() {
   //
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <h1 className="text-3xl font-bold mb-4">Bienvenue sur le site e-commerce SHOPLY</h1>
+      <h1 className="text-3xl font-bold mb-4 text-center">Bienvenue sur le site e-commerce SHOPLY</h1>
       <p className="mb-4 text-lg text-center max-w-xl">
         Ce site e-commerce a été réalisé dans le cadre d’un projet de démonstration afin de présenter mes compétences.
       </p>

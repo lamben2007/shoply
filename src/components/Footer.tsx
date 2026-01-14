@@ -32,12 +32,38 @@ const Footer = () => (
       {/* Paiements */}
       <div>
         <h4 className="text-lg font-semibold mb-3">Paiements acceptés</h4>
+
         <div className="flex space-x-3">
-          {/* Utilise ici des icônes ou images factices */}
-          <span className="bg-white rounded p-1"><Image src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" width={48} height={24} className="h-6 w-auto" /></span>
-          <span className="bg-white rounded p-1"><Image src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Mastercard" width={48} height={24} className="h-6 w-auto" /></span>
-          <span className="bg-white rounded p-1"><Image src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="Paypal" width={48} height={24} className="h-6 w-auto" /></span>
+          <span className="bg-white rounded p-1 relative w-12 h-6">
+            <Image
+              src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"
+              alt="Visa"
+              fill
+              sizes="48px"
+              className="object-contain"
+            />
+          </span>
+          <span className="bg-white rounded p-1 relative w-12 h-6">
+            <Image
+              src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png"
+              alt="Mastercard"
+              fill
+              sizes="48px"
+              className="object-contain"
+            />
+          </span>
+          <span className="bg-white rounded p-1 relative w-12 h-6">
+            <Image
+              src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+              alt="Paypal"
+              fill
+              sizes="48px"
+              className="object-contain"
+            />
+          </span>
         </div>
+
+
       </div>
     </div>
     <div className="border-t border-gray-700 py-4 text-center text-sm">
@@ -49,7 +75,7 @@ const Footer = () => (
         Ce site s&apos;appelle <span className="font-bold">Shoply</span>. Il s&apos;agit d&apos;une boutique fictive réalisée pour un portfolio. Aucune commande ne sera traitée, les données sont factices.
       </p>
     </div>
-    
+
   </footer >
 );
 

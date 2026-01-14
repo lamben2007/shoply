@@ -5,6 +5,7 @@ import { ShoppingCart } from "lucide-react";
 
 
 export default function CartIcon() {
+  
   // Total des articles du panier : somme des quantités, pas que le nombre de lignes !
   const itemCount = useCartStore(
     state => state.items.reduce((total, item) => total + item.quantity, 0)
