@@ -89,24 +89,32 @@ export default function AuthStatus() {
     if (loading) return null;
 
     return (
-        <div ref={menuRef} className="relative flex items-center gap-2">
-            {user && (
-                <span className="hidden md:block text-sm font-medium text-base-content max-w-[140px]" title={user.email ?? undefined}>
-                    {user.email}
-                </span>
-            )}
-            <button
-                className="btn btn-ghost btn-circle"
-                aria-label={user ? "Profil utilisateur" : "Se connecter"}
-                onClick={() => setOpen((v) => !v)}
-                type="button"
-                title={user?.email || undefined}
-            >
-                <UserIcon className="w-6 h-6" />
-            </button>
+        // <div ref={menuRef} className="dropdown dropdown-end flex items-center gap-2">
+        <div ref={menuRef} className="dropdown dropdown-end">
 
+            <div className="flex gap-2 items-center">
+                {user && (
+                    <span className="hidden md:block text-sm font-medium text-base-content max-w-[140px]" title={user.email ?? undefined}>
+                        {user.email}
+                    </span>
+                )}
+                {/* Le bouton qui ouvre le menu */}
+                <button
+                    type="button"
+                    className="btn btn-ghost btn-circle"
+                    aria-label={user ? "Profil utilisateur" : "Se connecter"}
+                    onClick={() => setOpen((v) => !v)}
+                    title={user?.email || undefined}
+                >
+                    <UserIcon className="w-6 h-6" />
+                </button>
+            </div>
+
+
+
+            {/* Le menu DaisyUI */}
             {open && (
-                <ul className="menu dropdown-content absolute right-0 mt-8 z-20 p-2 shadow bg-base-100 rounded-box w-52">
+                <ul tabIndex={0} className="dropdown-content menu menu-sm shadow bg-base-100 rounded-box w-52 mt-3 z-20">
                     {user ? (
                         <>
                             <li><button onClick={handleProfile}>Voir profil</button></li>
@@ -117,16 +125,12 @@ export default function AuthStatus() {
                     ) : (
                         <>
                             <li>
-                                <button
-                                    onClick={() => { setOpen(false); router.push('/login'); }}
-                                    className="text-green-700">
+                                <button onClick={() => { setOpen(false); router.push('/login'); }} className="text-green-700">
                                     Connexion
                                 </button>
                             </li>
                             <li>
-                                <button
-                                    onClick={() => { setOpen(false); router.push('/signup'); }}
-                                    className="text-blue-700">
+                                <button onClick={() => { setOpen(false); router.push('/signup'); }} className="text-blue-700">
                                     Créer un compte
                                 </button>
                             </li>

@@ -118,12 +118,12 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
     return (
         <main>
             <h1 className="text-2xl font-bold mb-6">Mes adresses</h1>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 justify-center">
                 {addresses.map(addr => (
                     <div
                         key={addr.id}
                         className={`
-                            border rounded-lg p-4 min-w-[260px] flex gap-2.5 flex-col
+                            border rounded-lg p-4 min-w-[260px] w-full sm:w-auto flex gap-2.5 flex-col
                             ${addr.isDefaultShipping ? 'bg-green-50 border-green-200' : 'bg-white border-gray-300'}
                         `}
                     >
@@ -134,7 +134,7 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
                             {addr.country}
                         </div>
                         <hr className="my-2" />
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap justify-center">
                             <button
                                 className="btn btn-sm btn-outline"
                                 onClick={() => handleEdit(addr)}
@@ -166,7 +166,17 @@ function AddressManager({ onAddressesChanged }: { onAddressesChanged?: () => voi
                 <button
                     type="button"
                     onClick={() => { setEditAddress(null); setShowForm(true); }}
-                    className="min-w-[260px] min-h-[120px] border-2 border-dashed border-gray-300 flex items-center justify-center text-3xl text-gray-400 hover:bg-gray-50 rounded-lg transition"
+                    className="
+                        m-0
+                        w-full md:w-auto
+                        min-h-[120px]
+                        border-2 border-dashed border-gray-300
+                        flex items-center justify-center
+                        text-3xl text-gray-400
+                        hover:bg-gray-50
+                        rounded-lg
+                        transition
+                    "
                 >
                     + Ajouter une adresse
                 </button>

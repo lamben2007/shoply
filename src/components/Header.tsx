@@ -39,7 +39,7 @@ export default function Header() {
             {/* Logo et titre */}
             <div className="flex items-center gap-6">
                 <div className='flex flex-col'>
-                    <div className='text-6xl'>SHOPLY</div>
+                    <div className='text-2xl md:text-6xl'>SHOPLY</div>
                     <div className='text-xs'>{packageJson.version}</div>
                 </div>
 
