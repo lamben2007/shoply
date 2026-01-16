@@ -1,6 +1,6 @@
 {
   "name": "shoply",
-  "version": "Version du 15/01/2026",
+  "version": "Version du 16/01/2026",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -40,7 +40,7 @@
     "eslint": "^9.39.2",
     "eslint-config-next": "16.0.7",
     "eslint-plugin-jsdoc": "^61.5.0",
-    "prisma": "^7.1.0",
+    "prisma": "^6.19.2",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5"
