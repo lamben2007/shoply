@@ -1,87 +1,169 @@
 
-# **Mini projet e-commerce – Portfolio**
+# 🛒 **Mini-Projet E-Commerce – Portfolio**
 
-### **Objectif**
+### 🎯 **Objectif**
 
-Créer un mini e-commerce **fullstack** avec **Next.js** et **Supabase**, entièrement fonctionnel et déployable sur **Vercel**, pour démontrer mes compétences en développement web moderne, du **frontend au backend**, en passant par la **gestion de base de données cloud**.
+Créer un mini e-commerce **fullstack**, professionnel, documenté et déployé, afin de démontrer la maîtrise d’un stack moderne :
 
----
+* **Next.js (App Router)**
+* **Prisma v7**
+* **PostgreSQL hébergée sur Supabase**
+* **Gestion d’état client avec Zustand**
+* Déploiement **Vercel**
 
-### **Technologies utilisées**
-
-* **Frontend** : Next.js (React), Tailwind CSS pour le design, Framer Motion pour les animations (optionnel)
-* **Backend** : Next.js API routes + Supabase (PostgreSQL)
-* **Base de données** : Supabase Free (un seul projet pour dev et prod)
-
-  * Tables séparées : `products_dev` et `products_prod`
-* **Déploiement** : Vercel (plan gratuit)
-* **Gestion d’état** : React Context ou Zustand (panier)
-* **Authentification (optionnelle)** : NextAuth.js avec Supabase
+Le projet doit être utilisable comme **référence de compétences en développement web moderne**.
 
 ---
 
-### **Fonctionnalités principales**
+## 🧰 **Technologies utilisées**
 
-1. **Catalogue de produits**
+| Domaine            | Technologie                   | Rôle                                  |
+| ------------------ | ----------------------------- | ------------------------------------- |
+| Frontend UI        | Next.js (React), Tailwind CSS | Pages, composants, design responsive  |
+| Animations         | Framer Motion *(optionnel)*   | UI raffinée pour portfolio            |
+| Backend            | Next.js API Routes            | Accès aux données via REST            |
+| Base de données    | Supabase → **PostgreSQL**     | Stockage persistant                   |
+| ORM                | **Prisma v7** (Server-only)   | Sécurité, typage, migrations          |
+| État global        | **Zustand + DevTools**        | Panier + données produits côté client |
+| Déploiement        | Vercel                        | Environnement production              |
+| Auth *(bonus)*     | NextAuth.js                   | Inscription / Connexion               |
+| Paiement *(bonus)* | Stripe                        | Paiement simulé ou réel               |
 
-   * Affichage d’une liste de produits avec image, nom, prix et description courte
-   * Page produit détaillée (page dynamique `[id].js` ou `[slug].js`)
-
-2. **Panier**
-
-   * Ajouter, supprimer ou modifier la quantité des produits
-   * Affichage du total en temps réel
-
-3. **Checkout simulé**
-
-   * Formulaire de commande (nom, email, adresse)
-   * Confirmation de commande après validation
-
-4. **Navigation et UI**
-
-   * Header : Accueil, Produits, Panier
-   * Footer : informations de contact
-   * Design responsive (mobile / desktop)
+📌 **Important** :
+➡️ **Plus d’accès direct à Supabase depuis le frontend**
+➡️ Toute la data passe par **Prisma dans les API Routes**
+➡️ Zustand ne stocke que le panier et le cache des produits côté client
 
 ---
 
-### **Fonctionnalités avancées / bonus**
+## 🗃️ **Base de données**
 
-* Filtrage et recherche de produits
-* Gestion simulée du stock et des disponibilités
-* Authentification utilisateur avec NextAuth.js
-* Intégration Stripe pour paiement simulé (optionnelle)
-* Animations UI (hover, transitions, etc.)
+### Modèles actuels (Prisma Schema)
 
----
+| Table       | Description                          |
+| ----------- | ------------------------------------ |
+| `Product`   | Articles du catalogue                |
+| `Order`     | Commandes clients                    |
+| `OrderItem` | Détails produits liés à une commande |
 
-### **Architecture et organisation**
+➡️ Une seule base Supabase sert pour **dev & prod**
+⭕ Pas de `_dev` / `_prod` en doublon
+✔️ Environnements différenciés uniquement via variables `.env`
 
-* **Tables Supabase** :
+🔐 Sécurité :
 
-  * `products_dev` / `products_prod` → produits
-  * `cart` → panier utilisateur (temporaire ou persisté)
-  * `orders` → commandes
-  * `users` → comptes utilisateurs (si auth)
-
-* **API routes Next.js** : CRUD pour produits, panier et commandes
-
-* **Variables d’environnement** : `.env.local` pour dev, Vercel dashboard pour prod
+* SSL obligatoire (`?sslmode=require`)
+* RLS activé pour les tables publiques
 
 ---
 
-### **Stratégie Dev → Prod**
+## 🧱 **Architecture du projet**
 
-* Développement sur Supabase Free avec tables `*_dev`
-* Déploiement sur Vercel : production utilise les tables `*_prod`
-* Même code pour dev et prod, seules les tables changent (ou via variables d’environnement)
+```
+Frontend (Pages Next.js + Client components)
+        ⬇️ appels HTTP
+API Routes Next.js  (/api/products, /api/orders, …)
+        ⬇️ Prisma v7
+Database PostgreSQL (Supabase)
+```
+
+→ Le serveur gère l'accès aux données
+→ Le client ne reçoit que des JSON propres
 
 ---
 
-### **Pertinence pour un portfolio**
+## 📦 **Gestion d’état — Zustand**
 
-* Montre la capacité à gérer un projet **fullstack moderne**
-* Démonstration concrète de compétences : Next.js, API routes, base de données cloud, gestion d’état et déploiement
-* Projet interactif et visuellement présentable
-* Facilement démontrable à un recruteur via un lien Vercel, screenshots ou vidéo
+Stores séparés (lisibilité + maintenabilité) :
+
+| Store             | Contenu                                |
+| ----------------- | -------------------------------------- |
+| `useProductStore` | Liste complète en cache, fetch via API |
+| `useCartStore`    | Produits ajoutés, quantités, total     |
+
+Zustand DevTools activé → debugging facile
+
+---
+
+## 🖥️ **Fonctionnalités principales**
+
+### 1️⃣ Catalogue produits
+
+* Page dynamique `/products`
+* Cartes produit
+* Fetch via `/api/products`
+* Mise en cache côté client
+
+### 2️⃣ Page produit
+
+* Route dynamique `/products/[slug]`
+* Fetch → `GET /api/products/:slug`
+* Bouton **Ajouter au panier**
+
+### 3️⃣ Panier (client only)
+
+* Ajouter / supprimer / modifier quantité
+* Totaux calculés automatiquement
+* Persistance locale (localStorage optionnel)
+
+### 4️⃣ Checkout
+
+* Formulaire : nom, email, adresse
+* Création commande via `POST /api/orders`
+* Page confirmation commande
+
+---
+
+## 🚀 **Fonctionnalités bonus (si le temps le permet)**
+
+| Feature                       | Intérêt                              |
+| ----------------------------- | ------------------------------------ |
+| Auth (NextAuth.js)            | Persistance du panier, espace client |
+| Stripe                        | Paiement réel ou simulé              |
+| Filtrage / recherche produits | UX améliorée                         |
+| Gestion stock                 | Réduction stock lors commande        |
+| Animations Framer Motion      | Plus pro pour un Portfolio           |
+
+---
+
+## ⚙️ **API — Plan**
+
+| Route                 | Méthode | Usage             |
+| --------------------- | ------- | ----------------- |
+| `/api/products`       | GET     | Liste produits    |
+| `/api/products/:slug` | GET     | Détails produit   |
+| `/api/orders`         | POST    | Création commande |
+
+Toutes sécurisées via Prisma
+Zéro accès public direct à la base 🔐
+
+---
+
+## 🌍 **Stratégie Dev → Prod**
+
+| Élément                   | Dev                              | Prod             |
+| ------------------------- | -------------------------------- | ---------------- |
+| Variables d’environnement | `.env.local`                     | Vercel Dashboard |
+| DB                        | Même DB mais restrictions IP/SSL | Pareil           |
+
+📌 Tests en local **prod-like** : `NODE_ENV=production next dev`
+
+---
+
+
+# 🧩 Résumé visuel
+
+```
+User
+  ⬇️ UI React
+Pages Products / Product / Cart / Checkout
+  ⬇️ (fetch)
+Next.js API Routes
+  ⬇️ (Prisma)
+PostgreSQL (Supabase)
+```
+
+Zustand → Panier & cache produits
+Prisma + API → Données sécurisées
+Vercel → Prod et build SSR
 

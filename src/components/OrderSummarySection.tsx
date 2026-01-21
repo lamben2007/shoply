@@ -1,21 +1,40 @@
 import React from "react";
 import { CartItem } from "@/types/cart";
 
+/**
+ * Propriétés attendues pour OrderSummarySection.
+ *
+ * @property {CartItem[]} items - Liste des articles du panier
+ * @property {number} deliveryCost - Frais de livraison appliqués
+ * @property {number} [discount] - Remise appliquée (optionnelle, défaut : 0)
+ */
 type Props = {
     items: CartItem[];
     deliveryCost: number;
     discount?: number;
 };
 
+/**
+ * Composant d'affichage du résumé de la commande.
+ *
+ * Présente le détail des articles, le sous-total, les frais de livraison, 
+ * la remise éventuelle et le total TTC.
+ *
+ * @param  props Les props attendues (items, frais, remise)
+ * @returns Le résumé formaté de la commande
+ */
 export default function OrderSummarySection({ items, deliveryCost, discount = 0 }: Props) {
 
+    // Calcul du sous-total des articles (somme prix * quantité)
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    // Calcul du total final (sous-total + livraison - remise)
     const total = subtotal + deliveryCost - discount;
 
     return (
-        // <section className="bg-white rounded-lg shadow p-6 max-w-2xl mx-auto">
+        // Section principale (peut recevoir des classes pour le style global)
         <section>
             <h2 className='font-bold text-2xl mb-4'>4. Résumé de la commande</h2>
+            {/* Tableau listant tous les articles de la commande */}
             <div className="overflow-x-auto">
                 <table className="min-w-full border border-gray-200 rounded">
                     <thead>
@@ -27,6 +46,7 @@ export default function OrderSummarySection({ items, deliveryCost, discount = 0 
                         </tr>
                     </thead>
                     <tbody>
+                        {/* Affichage de chaque article en ligne du tableau */}
                         {items.map((item, idx) => (
                             <tr
                                 key={item.productId}
@@ -41,6 +61,7 @@ export default function OrderSummarySection({ items, deliveryCost, discount = 0 
                     </tbody>
                 </table>
             </div>
+            {/* Détail des montants avec sous-total, livraison, remise, total */}
             <div className="mt-6 space-y-1 flex flex-col items-end">
                 <div><b>Sous-total :</b> {subtotal.toFixed(2)} €</div>
                 <div><b>Frais de livraison :</b> {deliveryCost.toFixed(2)} €</div>

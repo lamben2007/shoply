@@ -2,6 +2,14 @@
 
 import React from "react";
 
+/**
+ * Propriétés attendues pour le composant ConfirmButtonSection.
+ *
+ * @property {boolean} disabled - Indique si le bouton est désactivé.
+ * @property {boolean} loading - Indique si l'action est en cours de traitement.
+ * @property {string | null | undefined} [error] - Message d'erreur éventuel à afficher.
+ * @property {() => void} onConfirm - Fonction appelée lors du clic sur le bouton.
+ */
 type ConfirmButtonSectionProps = {
     disabled: boolean;
     loading: boolean;
@@ -9,14 +17,23 @@ type ConfirmButtonSectionProps = {
     onConfirm: () => void;
 };
 
-const ConfirmButtonSection: React.FC<ConfirmButtonSectionProps> = ({
+/**
+ * Section avec un bouton de confirmation principal pour valider un paiement ou une action critique.
+ *
+ * Gère l'état désactivé, l'affichage d'un loader animé, et un éventuel message d'erreur.
+ *
+ * @param props Propriétés de contrôle et callbacks
+ * @returns Section contenant le bouton et le gestionnaire d'état/erreur.
+ */
+const ConfirmButtonSection = ({
     disabled,
     loading,
     error,
     onConfirm,
-}) => {
+}: ConfirmButtonSectionProps) => {
     return (
         <section style={{ margin: "2rem 0", textAlign: "center" }}>
+            {/* Affichage du message d'erreur s'il existe */}
             {error && (
                 <div style={{ color: "red", marginBottom: 12 }}>{error}</div>
             )}
@@ -39,6 +56,7 @@ const ConfirmButtonSection: React.FC<ConfirmButtonSectionProps> = ({
                 }}
                 aria-busy={loading}
             >
+                {/* Affichage du loader et du texte de traitement si 'loading' true */}
                 {loading ? (
                     <>
                         Traitement en cours…
@@ -78,6 +96,7 @@ const ConfirmButtonSection: React.FC<ConfirmButtonSectionProps> = ({
                         </span>
                     </>
                 ) : (
+                    // Sinon, texte d'action principal
                     "Confirmer et payer"
                 )}
             </button>

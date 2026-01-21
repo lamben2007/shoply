@@ -1,6 +1,15 @@
 // DeliveryMethodSection.tsx
 import React, { useEffect, useState } from 'react';
 
+/**
+ * Type décrivant une option de livraison.
+ * 
+ * @property {string} id Identifiant unique de l'option
+ * @property {string} label Nom de l'option affichée à l'utilisateur
+ * @property {number} cost Coût de la livraison (en euros)
+ * @property {string} delay Délai de livraison estimé
+ * @property {string} [description] Description optionnelle affichée à côté de l'option
+ */
 type DeliveryOption = {
     id: string;
     label: string;
@@ -9,6 +18,7 @@ type DeliveryOption = {
     description?: string;
 };
 
+// Liste statique de toutes les options de livraison proposées
 const deliveryOptions: DeliveryOption[] = [
     {
         id: 'standard',
@@ -31,15 +41,31 @@ const deliveryOptions: DeliveryOption[] = [
     },
 ];
 
+/**
+ * Props attendues pour le composant DeliveryMethodSection.
+ * 
+ * @property {function} [onSelect] Callback appelée lors du choix ou changement de mode de livraison
+ */
 interface DeliveryMethodSectionProps {
     onSelect?: (option: DeliveryOption) => void;
 }
 
+/**
+ * Composant proposant un formulaire de sélection du mode de livraison.
+ *
+ * Affiche la liste des modes de livraison disponibles sous forme de boutons radio
+ * et remonte l'option sélectionnée via une callback `onSelect` si fournie.
+ *
+ * @param  props Props optionnelles dont la callback
+ * @returns Le formulaire de sélection de livraison
+ */
 const DeliveryMethodSection = ({ onSelect }: DeliveryMethodSectionProps) => {
 
+    // État local, identifiant de l'option actuellement sélectionnée
     const [selected, setSelected] = useState<string>('standard');
 
-    // Notifier l’option par défaut au parent au montage.
+    // Effet déclenché au montage ou à chaque changement de sélection/handler : 
+    // notifie l'option sélectionnée au parent via onSelect
     useEffect(() => {
         if (onSelect) {
             const found = deliveryOptions.find(opt => opt.id === selected);
@@ -47,7 +73,11 @@ const DeliveryMethodSection = ({ onSelect }: DeliveryMethodSectionProps) => {
         }
     }, [onSelect, selected]);
 
-    //
+    /**
+     * Handler de changement de sélection (radio button).
+     *
+     * @param {React.ChangeEvent<HTMLInputElement>} event L'événement du changement de choix
+     */
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelected(event.target.value);
         if (onSelect) {
@@ -56,10 +86,10 @@ const DeliveryMethodSection = ({ onSelect }: DeliveryMethodSectionProps) => {
         }
     };
 
-    //
     return (
         <form>
             <h2 className='font-bold text-2xl mb-2'>Choisissez votre mode de livraison</h2>
+            {/* Affichage de chaque option de livraison sous forme de ligne radio */}
             {deliveryOptions.map(option => (
                 <label
                     key={option.id}
